@@ -528,8 +528,8 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
   <div class="mark">ÉLORA</div>
   <nav class="hlinks">
     <button class="navitem" id="megaBtn" aria-expanded="false">Каталог</button>
-    <a href="#catalog" data-cat="Балетки">Балетки</a>
-    <a href="#catalog" data-cat="Босоніжки">Босоніжки</a>
+    <a href="#catalog" data-cat="Чоботи">Чоботи</a>
+    <a href="#catalog" data-cat="Лофери">Лофери</a>
     <a href="#catalog" data-cat="Туфлі">Туфлі</a>
     <a href="#catalog" data-dept="leather">Сумки</a>
     <a href="#catalog" data-dept="leather" data-cat="Жіночі гаманці">Гаманці</a>
@@ -636,7 +636,7 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
     <div id="filters">
       <div class="search">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
-        <input type="search" id="q" placeholder="Пошук: балетки, замша, чорний…">
+        <input type="search" id="q" placeholder="Пошук: чоботи, замша, чорний…">
       </div>
       <div class="swatches" id="sw"></div>
       <div class="szrow" id="szrow"></div>
@@ -725,7 +725,7 @@ document.addEventListener('error', e => {
 
 /* отделы: взуття (TAPULI) + шкіряна галантерея (4cases, data/4cases.js из import_4cases.py) */
 const DEPTS = [
-  {id:'shoes', name:'Взуття', note:'Балетки, лофери, туфлі, босоніжки'},
+  {id:'shoes', name:'Взуття', note:''},
   {id:'leather', name:'Сумки та аксесуари', note:'Сумки, гаманці, ремені · 4cases'}
 ];
 DATA.forEach(p => { p.d = p.d || 'shoes'; });
@@ -740,10 +740,14 @@ if(typeof PRICES !== 'undefined') DATA.forEach(p => {
   if(x.p != null) p.p = x.p;
   if('o' in x) p.o = x.o;
 });
+/* підпис плитки «Взуття» — чотири найбільші категорії поточного фіду */
+DEPTS[0].note = CATS.filter(c => c.d === 'shoes').slice(0, 4).map(c => c.name.toLowerCase())
+  .join(', ').replace(/^./, ch => ch.toUpperCase());
 const deptCount = id => DATA.filter(p => p.d === id).length;
 
 /* цвета поставщика -> образцы */
 const HEX = {
+  'Темний бежевий':'#B59A78','Тофі':'#8A5A3B',
   'Чорний':'#17140F','Коричневий':'#6B4A2E','Бежевий':'#D6C2A6','Блакитний':'#A6C3D8',
   'Жовтий':'#E3C24A','Білий':'#F0EDE6','Світлий бежевий':'#E4D6C0','Червоний':'#A62B2B',
   'Рожевий':'#DFA6B6','Рудий':'#B5623A','Зелений':'#4A6B4A','Бордовий':'#6B2436',
