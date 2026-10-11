@@ -39,6 +39,8 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:400;
   font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;letter-spacing:-.005em}
 img{display:block;max-width:100%}
+/* заглушка замість битого фото: монограма на світлому тлі */
+img.broken{object-fit:contain!important;padding:32% 36%;background:var(--surf)!important;opacity:.45}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 input,select{font:inherit}
 ::selection{background:var(--orange);color:#fff}
@@ -97,7 +99,7 @@ header.menu{z-index:95;background:transparent!important;
 .burger.on i:nth-child(1){transform:translateY(3.2px) rotate(45deg)}
 .burger.on i:nth-child(2){width:20px;transform:translateY(-3.2px) rotate(-45deg)}
 @media(max-width:1000px){.hlinks{display:none}.burger{display:flex}
-  .mark{position:absolute;left:50%;transform:translateX(-50%)}}
+  .hin .mark{position:absolute;left:50%;transform:translateX(-50%)}}
 
 /* ================= drawer (mobile) ================= */
 .drawer{position:fixed;inset:0;z-index:90;display:none;
@@ -217,6 +219,7 @@ header.menu{z-index:95;background:transparent!important;
 .mcol.thin button{font-family:var(--sans);font-size:14px;font-weight:500;padding:6px 0}
 .mpromo{border-left:1px solid var(--rule2);padding-left:34px}
 .mpromo img{width:100%;aspect-ratio:4/3;object-fit:cover;margin-bottom:14px;border-radius:14px;background:var(--up)}
+.mpromo img.broken{padding:18%}
 .mpromo b{display:block;font-family:var(--serif);font-weight:500;font-size:20px;margin-bottom:4px}
 .mpromo span{font-size:13px;color:var(--dim)}
 .mega .st{opacity:0;transform:translateY(8px)}
@@ -558,7 +561,7 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
     <button data-sort="exp">Преміум</button>
   </div>
   <div class="mpromo st">
-    <img id="megaImg" src="" alt="" loading="lazy">
+    <div id="megaImg"></div>
     <b>Нове надходження</b>
     <span>Щоденне оновлення з наявності — тільки те, що є на складі</span>
   </div>
@@ -570,7 +573,7 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
     <button class="dclose" id="dclose" aria-label="Закрити">×</button>
 
     <div class="dhead di">
-      <img id="dmono" src="" alt="">
+      <img id="dmono" src="assets/mono.png" alt="">
       <div class="w">ÉLORA</div>
       <div class="t">Maison of leather · Kyiv</div>
     </div>
@@ -593,7 +596,7 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
 
 <section class="hero">
   <div class="hero-in">
-    <div class="crest"><img id="mono" alt="" width="56"></div>
+    <div class="crest"><img id="mono" src="assets/mono.png" alt="" width="56"></div>
     <div class="wordmark">ÉLORA</div>
     <div class="tagline">Maison of leather · Kyiv</div>
     <h1>Шкіра, яку обирають <em>на роки</em></h1>
@@ -603,7 +606,7 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
       <a class="link" href="#catalog" data-sort="sale">Знижки сезону</a>
     </div>
   </div>
-  <div class="hero-bg"><img id="hero" alt="Жіночі човники з натуральної шкіри"></div>
+  <div class="hero-bg"><img id="hero" src="assets/hero.jpg" alt="Жіночі човники з натуральної шкіри" fetchpriority="high" decoding="async" width="916" height="1717"></div>
   <div class="vside l">Kyiv · Ukraine · Est. 2026</div>
 </section>
 
@@ -701,6 +704,25 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
 <script>
 const ASSETS = {hero:'assets/hero.jpg', mono:'assets/mono.png'};
 
+/* фото постачальників: через оптимізатор Vercel (стискає у WebP і обходить заборону хотлінку),
+   при помилці — пряме посилання, далі наступне фото товару, наостанок — заглушка з монограмою */
+const PROXY = !/^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname) && location.protocol === 'https:';
+const IMG = (u, w) => PROXY && /^https:\/\//.test(u || '') ? `/_vercel/image?url=${encodeURIComponent(u)}&w=${w}&q=78` : (u || '');
+const pic = (list, w, extra = '') => {
+  const [u, ...rest] = (list || []).filter(Boolean);
+  return `<img src="${IMG(u, w)}" data-o="${u || ''}" data-w="${w}" data-alts="${rest.join('|')}" ${extra}>`;
+};
+document.addEventListener('error', e => {
+  const im = e.target;
+  if(im.tagName !== 'IMG' || im.dataset.o === undefined) return;
+  if(im.src.includes('/_vercel/image') && im.dataset.o){ im.src = im.dataset.o; return; }
+  if(im.classList.contains('alt')){ im.remove(); return; }
+  const alts = (im.dataset.alts || '').split('|').filter(Boolean);
+  if(alts.length){ const n = alts.shift(); im.dataset.alts = alts.join('|'); im.dataset.o = n; im.src = IMG(n, +im.dataset.w); return; }
+  if(im.classList.contains('broken')) return;
+  im.classList.add('broken'); im.dataset.o = ''; im.src = ASSETS.mono;
+}, true);
+
 /* отделы: взуття (TAPULI) + шкіряна галантерея (4cases, data/4cases.js из import_4cases.py) */
 const DEPTS = [
   {id:'shoes', name:'Взуття', note:'Балетки, лофери, туфлі, босоніжки'},
@@ -743,8 +765,6 @@ const COLORS = [...new Set(DATA.map(p=>p.col))].filter(c=>HEX[c])
 const state = {dept:'', cat:'', size:'', color:'', sort:'feat', q:'', fav:false,
                shown:PAGE, cart:[], favs:new Set()};
 
-$('#hero').src = ASSETS.hero;
-$('#mono').src = ASSETS.mono;
 /* ============ toast ============ */
 let tt;
 function toast(msg){
@@ -777,7 +797,7 @@ function drawDepts(){
     const n = deptCount(d.id), cover = DATA.find(p => p.d === d.id)?.img[0];
     const img = d.id === 'shoes' ? ASSETS.hero : cover;
     return `<button class="dept ${n ? '' : 'soon'}" ${n ? `data-dept="${d.id}"` : 'disabled'}>
-      ${img ? `<img src="${img}" alt="" loading="lazy">` : ''}
+      ${img ? (d.id === 'shoes' ? `<img src="${img}" alt="" loading="lazy">` : pic(DATA.filter(p => p.d === d.id).slice(0, 3).map(p => p.img[0]), 1080, 'alt="" loading="lazy"')) : ''}
       <div><small>${n ? n + ' моделей' : 'Незабаром'}</small><b>${d.name}</b>
       <span>${n ? d.note : 'Колекція 4cases готується до запуску'}</span></div></button>`;
   }).join('');
@@ -866,15 +886,14 @@ function visible(){
 
 function cardHTML(p){
   const i = DATA.indexOf(p);
-  const alt = p.img[1] || p.img[0];
   const sized = p.sz.length > 0;
-  const sizes = sized ? ALL_SIZES.map(s=>`<b class="${p.sz.includes(s)?'':'off'}">${s}</b>`).join('') : '';
+  const sizes = sized ? p.sz.map(s=>`<b>${s}</b>`).join('') : '';
   const quick = sized ? p.sz.map(s=>`<button data-add="${i}" data-s="${s}">${s}</button>`).join('')
                       : `<button data-add="${i}" data-s="${ONE}">До кошика</button>`;
   return `<article class="card">
     <div class="shot" data-open="${i}">
-      <img class="main" src="${p.img[0]}" alt="${p.t}" loading="lazy">
-      <img class="alt" src="${alt}" alt="" loading="lazy">
+      ${pic(p.img, 640, `class="main" alt="${p.t.replace(/"/g, '&quot;')}" loading="lazy"`)}
+      ${p.img[1] ? pic([p.img[1]], 640, 'class="alt" alt="" loading="lazy"') : ''}
       ${p.o ? '<span class="flag">Sale</span>' : ''}
       <div class="quick">${quick}</div>
     </div>
@@ -942,11 +961,11 @@ function openProduct(p){
   $('#psheet').innerHTML = `
     <div class="grab"><i></i></div>
     <div class="gal">
-      <div class="big"><img id="big" src="${p.img[0]}" alt="${p.t}"></div>
+      <div class="big">${pic(p.img, 1080, `id="big" alt="${p.t.replace(/"/g, '&quot;')}"`)}</div>
       <button class="garrow p" data-nav="-1" aria-label="Назад">‹</button>
       <button class="garrow n" data-nav="1" aria-label="Далі">›</button>
       <div class="thumbs">${p.img.map((s,i)=>
-        `<img src="${s}" class="${i?'':'on'}" data-i="${i}" alt="">`).join('')}</div>
+        pic([s], 128, `class="${i?'':'on'}" data-i="${i}" alt="" loading="lazy"`)).join('')}</div>
     </div>
     <div class="info">
       <button class="close" id="pClose" aria-label="Закрити">×</button>
@@ -968,7 +987,7 @@ function openProduct(p){
     ${rel.length ? `<div class="rel">
       <div class="eyebrow">Схожі моделі</div>
       <div class="relg">${rel.map(x=>`<button data-rel="${DATA.indexOf(x)}">
-        <img src="${x.img[0]}" alt="" loading="lazy">
+        ${pic(x.img, 384, 'alt="" loading="lazy"')}
         <b>${x.t}</b><span>${money(x.p)}</span></button>`).join('')}</div>
     </div>` : ''}`;
 
@@ -1002,7 +1021,10 @@ $('#psheet').addEventListener('click', e=>{
 });
 
 function setImg(i){
-  $('#big').src = cur.img[i];
+  const big = $('#big');
+  big.classList.remove('broken');
+  big.dataset.o = cur.img[i]; big.dataset.alts = '';
+  big.src = IMG(cur.img[i], 1080);
   $('#psheet').querySelectorAll('.thumbs img').forEach(el=>
     el.classList.toggle('on', +el.dataset.i === i));
 }
@@ -1015,7 +1037,7 @@ function badge(sel, n){
 function addToCart(p, size){
   const key = p.id + '-' + size;
   if(state.cart.some(i => i.key === key)){ toast('Ця пара вже в кошику'); return; }
-  state.cart.push({key, id:p.id, t:p.t, col:p.col, img:p.img[0], price:p.p, size});
+  state.cart.push({key, id:p.id, t:p.t, col:p.col, img:p.img, price:p.p, size});
   badge('#cartN', state.cart.length);
   renderCart();
   toast(size === ONE ? 'Додано в кошик' : `Додано · розмір ${size}`);
@@ -1033,7 +1055,7 @@ function renderCart(done){
     foot.innerHTML = ''; return;
   }
   items.innerHTML = state.cart.map(i=>`<div class="ci">
-    <img src="${i.img}" alt="">
+    ${pic(i.img, 128, 'alt=""')}
     <div><b>${i.t}</b><div class="m">${[i.col, i.size === ONE ? '' : 'розмір ' + i.size].filter(Boolean).join(' · ')}</div>
       <div class="p">${money(i.price)}</div></div>
     <button class="rm" data-rm="${i.key}" aria-label="Прибрати">×</button>
@@ -1099,7 +1121,7 @@ placeFilters();
 $('#megaCats').innerHTML = DEPTS.filter(d => deptCount(d.id)).map(d =>
   `<h6>${d.name}</h6>` + CATS.filter(c => c.d === d.id).map(c=>
   `<button data-cat="${c.name}">${c.name} <em>${c.n}</em></button>`).join('')).join('');
-$('#megaImg').src = DATA.find(p=>p.o)?.img[0] || DATA[0].img[0];
+$('#megaImg').innerHTML = pic(DATA.filter(p => p.o).slice(0, 4).map(p => p.img[0]).concat(DATA[0].img[0]), 640, 'alt="" loading="lazy"');
 
 const mega = $('#mega'), megaBtn = $('#megaBtn');
 function toggleMega(open){

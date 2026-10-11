@@ -13,6 +13,15 @@
       ]
     },
     {
+      "source": "/img/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=2592000"
+        }
+      ]
+    },
+    {
       "source": "/data/catalog.js",
       "headers": [
         {
@@ -64,5 +73,27 @@
         }
       ]
     }
-  ]
+  ],
+  "images": {
+    "sizes": [
+      128,
+      384,
+      640,
+      1080
+    ],
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "img.tapuli.shop"
+      },
+      {
+        "protocol": "https",
+        "hostname": "4cases.com.ua"
+      }
+    ],
+    "formats": [
+      "image/webp"
+    ],
+    "minimumCacheTTL": 2678400
+  }
 }
