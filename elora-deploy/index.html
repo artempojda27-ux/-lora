@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ÉLORA — жіноче взуття з натуральної шкіри | Доставка по Україні</title>
-<meta name="description" content="Жіноче взуття ÉLORA: балетки, босоніжки, лофери, туфлі та черевики з натуральної шкіри й замші. Усе в наявності, відправка Новою поштою за 1–3 дні.">
+<meta name="description" content="ÉLORA: жіноче взуття, шкіряні сумки, гаманці, портмоне та ремені з натуральної шкіри. Усе в наявності, відправка Новою поштою за 1–3 дні.">
 <link rel="canonical" href="https://elora.ua/">
 <meta name="theme-color" content="#F7F3EC">
 <link rel="icon" href="assets/icon-32.png" sizes="32x32">
@@ -185,13 +185,16 @@ header.menu{z-index:95;background:transparent!important;
   -webkit-backdrop-filter:saturate(1.8) blur(24px);
   border-bottom:1px solid var(--rule2);
   max-height:0;transition:max-height .58s var(--spring)}
-.mega.on{max-height:560px}
+.mega.on{max-height:760px}
+.mcol .links h6{grid-column:1/-1;font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--orange);margin:14px 0 4px}
+.mcol .links h6:first-child{margin-top:0}
 .megain{display:grid;grid-template-columns:2fr 1fr 1.1fr;gap:44px;padding:36px 32px 46px}
 @media(max-width:1000px){.mega{display:none}}
 .mcol h5{font-size:11px;letter-spacing:.06em;color:var(--faint);margin-bottom:14px;font-weight:500}
 .mcol .links{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
 .mcol button{display:flex;justify-content:space-between;align-items:baseline;gap:12px;width:100%;
-  font-family:var(--serif);font-weight:500;font-size:22px;color:var(--ink);padding:5px 0;text-align:left;
+  font-family:var(--serif);font-weight:500;font-size:20px;color:var(--ink);padding:3px 0;text-align:left;
   transition:color .2s}
 .mcol button:hover{color:var(--orange)}
 .mcol button em{font-style:normal;font-family:var(--sans);font-size:11px;color:var(--faint)}
@@ -233,7 +236,7 @@ header.menu{z-index:95;background:transparent!important;
   transition:transform 1.4s var(--ease)}
 .dept:hover img{transform:scale(1.04)}
 .dept::after{content:'';position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(to top,rgba(29,22,16,.62),rgba(29,22,16,0) 60%)}
+  background:linear-gradient(to top,rgba(29,22,16,.78),rgba(29,22,16,.35) 45%,rgba(29,22,16,0) 75%)}
 .dept div{padding:26px 28px;color:#fff}
 .dept small{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.8;margin-bottom:6px}
 .dept b{display:block;font-family:var(--serif);font-weight:500;font-size:34px;line-height:1.05;margin-bottom:8px}
@@ -287,6 +290,7 @@ header.menu{z-index:95;background:transparent!important;
 .sw:hover{transform:scale(1.14)}
 .sw.on{box-shadow:inset 0 0 0 1px rgba(29,29,31,.14),0 0 0 2px var(--bg),0 0 0 3.5px var(--orange)}
 .szrow{display:flex;gap:6px;flex-wrap:wrap}
+.szrow[hidden]{display:none}
 .szrow button{min-width:40px;height:34px;border:1px solid var(--rule);border-radius:10px;
   font-size:13px;color:var(--ink);background:var(--surf);transition:.2s}
 .szrow button:hover{border-color:var(--ink)}
@@ -507,6 +511,8 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
     <a href="#catalog" data-cat="Балетки">Балетки</a>
     <a href="#catalog" data-cat="Босоніжки">Босоніжки</a>
     <a href="#catalog" data-cat="Туфлі">Туфлі</a>
+    <a href="#catalog" data-dept="leather">Сумки</a>
+    <a href="#catalog" data-dept="leather" data-cat="Жіночі гаманці">Гаманці</a>
     <a href="#catalog" data-sort="sale">Sale</a>
     <a href="#catalog" data-fav="1">Обране</a>
   </nav>
@@ -549,7 +555,7 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
     <div class="dhead di">
       <img id="dmono" src="" alt="">
       <div class="w">ÉLORA</div>
-      <div class="t">Curated women's footwear</div>
+      <div class="t">Maison of leather · Kyiv</div>
     </div>
 
     <div class="dpills di">
@@ -634,7 +640,7 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
   <div class="fgrid">
     <div>
       <div class="mark" style="font-size:18px">ÉLORA</div>
-      <p>Curated women's footwear. Натуральна шкіра та замша, українське та європейське виробництво.</p>
+      <p>Maison of leather. Взуття, сумки та аксесуари з натуральної шкіри й замші.</p>
     </div>
     <div class="fcol">
       <h4>Покупцям</h4>
@@ -774,6 +780,9 @@ function syncUI(){
   const active = [state.dept, state.cat, state.size, state.color, state.q, state.fav ? 1 : 0,
                   state.sort !== 'feat' ? 1 : 0].filter(Boolean).length;
   $('#clearf').classList.toggle('show', active > 0);
+  /* размерная сетка нужна только взуттю */
+  $('#szrow').hidden = state.dept === 'leather' || (!!state.cat && !CATS.some(c => c.name === state.cat && c.d === 'shoes'));
+  if($('#szrow').hidden && state.size){ state.size = ''; }
   $('#fcount').textContent = active;
   $('#fcount').classList.toggle('show', active > 0);
 }
@@ -1062,8 +1071,9 @@ addEventListener('resize', placeFilters);
 placeFilters();
 
 /* ============ apple mega menu ============ */
-$('#megaCats').innerHTML = CATS.map(c=>
-  `<button data-cat="${c.name}">${c.name} <em>${c.n}</em></button>`).join('');
+$('#megaCats').innerHTML = DEPTS.filter(d => deptCount(d.id)).map(d =>
+  `<h6>${d.name}</h6>` + CATS.filter(c => c.d === d.id).map(c=>
+  `<button data-cat="${c.name}">${c.name} <em>${c.n}</em></button>`).join('')).join('');
 $('#megaImg').src = DATA.find(p=>p.o)?.img[0] || DATA[0].img[0];
 
 const mega = $('#mega'), megaBtn = $('#megaBtn');
@@ -1105,6 +1115,7 @@ burger.onclick = () => toggleMenu();
 
 
 function applyNav(el){
+  if(el.dataset.dept !== undefined){ state.dept = el.dataset.dept; state.cat = ''; state.fav = false; drawRail(); }
   if(el.dataset.cat !== undefined){
     state.cat = el.dataset.cat; state.fav = false;
     const c = CATS.find(x => x.name === state.cat);
@@ -1127,7 +1138,7 @@ document.querySelector('.ctas').addEventListener('click', e=>{
   const el = e.target.closest('[data-sort]'); if(el) applyNav(el);
 });
 document.querySelector('.hlinks').addEventListener('click', e=>{
-  const el = e.target.closest('[data-cat],[data-sort],[data-fav]');
+  const el = e.target.closest('[data-cat],[data-sort],[data-fav],[data-dept]');
   if(el) applyNav(el);
 });
 
