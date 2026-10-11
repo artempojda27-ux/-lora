@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>ÉLORA · Ціни</title>
+<meta name="theme-color" content="#F7F3EC">
+<link rel="icon" href="assets/icon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F3EC; --surf:#FFFFFF; --sand:#F2ECE2; --up:#EFE9DF;
+  --orange:#E2601A; --orange-d:#C24E10; --orange-l:#FBEADF; --brown:#3B2A1E;
+  --ink:#1D1D1F; --dim:#6E6E73; --faint:#9C958B; --green:#2E7D4F; --red:#B3261E;
+  --rule:rgba(59,42,30,.16); --rule2:rgba(29,29,31,.08);
+  --serif:'Cormorant Garamond','Times New Roman',serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;
+  --spring:cubic-bezier(.32,.72,0,1); --r:18px;
+  --glass:rgba(255,255,255,.72); --shadow:0 1px 2px rgba(59,42,30,.04),0 10px 34px rgba(59,42,30,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;letter-spacing:-.005em;min-height:100vh}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+img{display:block}
+
+/* фон — той самий, що на вітрині */
+.ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.ambient i{position:absolute;border-radius:50%;filter:blur(70px);will-change:transform}
+.ambient i:nth-child(1){width:62vmax;height:62vmax;left:-18vmax;top:-22vmax;
+  background:radial-gradient(circle,rgba(246,205,176,.85),rgba(246,205,176,0) 62%);animation:silk1 34s ease-in-out infinite alternate}
+.ambient i:nth-child(2){width:56vmax;height:56vmax;right:-20vmax;top:18vh;
+  background:radial-gradient(circle,rgba(226,206,178,.9),rgba(226,206,178,0) 62%);animation:silk2 41s ease-in-out infinite alternate}
+.ambient i:nth-child(3){width:48vmax;height:48vmax;left:22vw;bottom:-26vmax;
+  background:radial-gradient(circle,rgba(238,170,128,.42),rgba(238,170,128,0) 62%);animation:silk3 47s ease-in-out infinite alternate}
+@keyframes silk1{to{transform:translate(16vw,12vh) scale(1.15)}}
+@keyframes silk2{to{transform:translate(-18vw,-10vh) scale(.9)}}
+@keyframes silk3{to{transform:translate(12vw,-16vh) scale(1.2)}}
+.ambient canvas{position:absolute;inset:0;width:100%;height:100%}
+.ambient::after{content:'';position:absolute;inset:0;opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.glass{background:var(--glass);backdrop-filter:saturate(1.8) blur(22px);-webkit-backdrop-filter:saturate(1.8) blur(22px);
+  border:1px solid rgba(255,255,255,.7);box-shadow:var(--shadow)}
+.wrap{max-width:1280px;margin:0 auto;padding:0 28px}
+@media(max-width:640px){.wrap{padding:0 14px}}
+
+/* шапка */
+header{position:sticky;top:0;z-index:30;background:rgba(247,243,236,.7);
+  backdrop-filter:saturate(1.8) blur(20px);-webkit-backdrop-filter:saturate(1.8) blur(20px);border-bottom:1px solid var(--rule2)}
+.hin{display:flex;align-items:center;gap:14px;height:56px}
+.mark{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:.26em;color:var(--brown)}
+.mark small{font-family:var(--sans);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);
+  margin-left:10px;font-weight:500}
+.hin .sp{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 16px;border-radius:999px;
+  font-size:13.5px;font-weight:500;white-space:nowrap;text-decoration:none;color:inherit;transition:background .25s,transform .25s var(--spring),opacity .25s}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--orange);color:#fff}.btn.pri:hover{background:var(--orange-d)}
+.btn.sec{background:var(--surf);border:1px solid var(--rule)}.btn.sec:hover{border-color:var(--ink)}
+.btn.ghost{color:var(--dim)}.btn.ghost:hover{color:var(--ink);background:rgba(29,29,31,.05)}
+.btn:disabled{opacity:.4;pointer-events:none}
+.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6}
+.pill{display:none;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#fff;color:var(--orange);
+  font-size:11px;font-weight:600;place-items:center}
+.pill.on{display:grid}
+@media(max-width:760px){.hide-m{display:none}}
+
+/* hero */
+.top{padding:38px 0 22px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.top h1{font-family:var(--serif);font-weight:500;font-size:clamp(38px,5vw,60px);line-height:1;letter-spacing:-.01em}
+.top h1 em{font-style:italic;color:var(--orange)}
+.top p{color:var(--dim);margin-top:10px;max-width:56ch}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{padding:14px 18px;border-radius:16px;min-width:130px}
+.stat b{display:block;font-family:var(--serif);font-weight:500;font-size:28px;line-height:1.05}
+.stat span{font-size:11.5px;color:var(--dim)}
+
+/* масові дії */
+.bulk{border-radius:22px;padding:20px 22px;margin-bottom:16px}
+.bulk h2{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);font-weight:500;margin-bottom:14px}
+.brow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11.5px;color:var(--dim);font-weight:500}
+.inp,.sel{height:40px;border-radius:12px;border:1px solid var(--rule);background:var(--surf);padding:0 12px;font-size:15px}
+.inp:focus,.sel:focus{outline:none;border-color:var(--orange)}
+.sel{padding-right:30px;appearance:none;-webkit-appearance:none;
+  background:var(--surf) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236E6E73' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 12px center}
+.inp.num{width:120px}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.presets button{height:30px;padding:0 12px;border-radius:999px;border:1px solid var(--rule);background:var(--surf);font-size:12.5px;font-weight:500}
+.presets button:hover{border-color:var(--orange);color:var(--orange)}
+.preview{margin-top:14px;font-size:13px;color:var(--dim);min-height:20px}
+.preview b{color:var(--ink);font-weight:600}
+.seg{display:inline-flex;background:rgba(29,29,31,.06);border-radius:11px;padding:2px;position:relative}
+.seg button{position:relative;z-index:1;height:34px;padding:0 14px;border-radius:9px;font-size:13px;font-weight:500;transition:background .3s,box-shadow .3s}
+.seg button.on{background:var(--surf);box-shadow:0 3px 8px rgba(0,0,0,.08),0 1px 1px rgba(0,0,0,.04)}
+
+/* фільтри */
+.filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 0;position:sticky;top:56px;z-index:20;
+  background:rgba(247,243,236,.78);backdrop-filter:saturate(1.8) blur(18px);-webkit-backdrop-filter:saturate(1.8) blur(18px)}
+.search{position:relative;flex:1;min-width:200px;max-width:340px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--faint);fill:none;stroke-width:1.6}
+.search input{width:100%;height:38px;border-radius:12px;border:1px solid transparent;background:rgba(29,29,31,.06);padding:0 12px 0 34px;font-size:15px}
+.search input:focus{outline:none;background:var(--surf);border-color:var(--orange)}
+.chk{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);cursor:pointer;user-select:none}
+.chk input{width:18px;height:18px;accent-color:var(--orange)}
+.count{margin-left:auto;font-size:12.5px;color:var(--faint)}
+@media(max-width:760px){.filters{position:static;background:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+  .search{max-width:none;flex-basis:100%}}
+
+/* таблиця */
+.list{border-radius:22px;overflow:hidden;margin-bottom:60px}
+.row{display:grid;grid-template-columns:32px 52px minmax(0,1fr) 120px 128px 128px 70px;gap:14px;align-items:center;
+  padding:10px 18px;border-bottom:1px solid var(--rule2);transition:background .2s}
+.row:last-child{border-bottom:none}
+.row.head{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:500;padding:12px 18px;
+  background:rgba(255,255,255,.5)}
+.row:not(.head):hover{background:rgba(255,255,255,.55)}
+.row.changed{background:linear-gradient(90deg,rgba(226,96,26,.07),transparent 40%)}
+.row img{width:52px;height:62px;object-fit:cover;border-radius:10px;background:var(--up)}
+.row .t{font-weight:500;font-size:13.5px;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.row .m{font-size:12px;color:var(--faint);margin-top:2px}
+.row .orig{font-size:13px;color:var(--dim)}
+.row .orig s{color:var(--faint)}
+.pin{width:100%;height:38px;border-radius:11px;border:1px solid var(--rule);background:var(--surf);padding:0 10px;font-size:15px;
+  font-weight:600;font-variant-numeric:tabular-nums}
+.pin.old{font-weight:400;color:var(--dim)}
+.pin:focus{outline:none;border-color:var(--orange)}
+.row.changed .pin.new{border-color:rgba(226,96,26,.55);background:#FFFBF8}
+.delta{font-size:12px;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.delta.up{color:var(--green)}.delta.down{color:var(--red)}
+.row input[type=checkbox]{width:18px;height:18px;accent-color:var(--orange)}
+.more{display:block;margin:0 auto 70px}
+.empty{padding:60px 20px;text-align:center;color:var(--dim);font-family:var(--serif);font-size:24px}
+@media(max-width:860px){
+  .row{grid-template-columns:28px 46px minmax(0,1fr) 104px;gap:10px;padding:10px 12px}
+  .row img{width:46px;height:56px}
+  .row .orig,.row .c-old,.row .delta,.row.head .h-orig,.row.head .h-old,.row.head .h-delta{display:none}
+}
+
+/* панель збереження */
+.dock{position:fixed;left:50%;bottom:22px;transform:translate(-50%,140%);z-index:40;display:flex;align-items:center;gap:10px;
+  padding:8px 8px 8px 20px;border-radius:999px;transition:transform .6s var(--spring)}
+.dock.on{transform:translate(-50%,0)}
+.dock span{font-size:13.5px;font-weight:500;white-space:nowrap}
+@media(max-width:560px){.dock{left:12px;right:12px;transform:translateY(140%);justify-content:space-between}.dock.on{transform:none}
+  .dock span{font-size:12.5px}}
+
+/* модалка налаштувань */
+.scrim{position:fixed;inset:0;z-index:50;background:rgba(29,22,16,.3);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  opacity:0;pointer-events:none;transition:opacity .35s}
+.scrim.on{opacity:1;pointer-events:auto}
+.modal{position:fixed;left:50%;top:50%;z-index:51;width:min(520px,calc(100vw - 28px));max-height:90vh;overflow:auto;
+  transform:translate(-50%,-46%) scale(.97);opacity:0;pointer-events:none;border-radius:26px;padding:28px;
+  background:rgba(255,255,255,.92);transition:opacity .35s,transform .5s var(--spring)}
+.modal.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.modal h3{font-family:var(--serif);font-weight:500;font-size:30px;margin-bottom:6px}
+.modal p{color:var(--dim);font-size:13px;margin-bottom:18px}
+.modal .field{margin-bottom:12px}
+.modal .inp{width:100%}
+.modal .acts{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.modal a{color:var(--orange)}
+.note{font-size:12px;color:var(--faint);margin-top:4px}
+
+.toast{position:fixed;left:50%;top:70px;transform:translate(-50%,-20px);z-index:60;background:rgba(29,29,31,.9);color:#fff;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:999px;padding:11px 20px;font-size:13.5px;font-weight:500;
+  opacity:0;pointer-events:none;transition:.45s var(--spring);white-space:nowrap;max-width:calc(100vw - 28px);overflow:hidden;text-overflow:ellipsis}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast.err{background:rgba(179,38,30,.94)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true"><i></i><i></i><i></i><canvas></canvas></div>
+
+<header><div class="wrap hin">
+  <div class="mark">ÉLORA<small class="hide-m">Ціни</small></div>
+  <div class="sp"></div>
+  <button class="btn ghost" id="undo" disabled title="Скасувати (Ctrl+Z)">
+    <svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span class="hide-m">Скасувати</span></button>
+  <button class="btn ghost" id="settingsBtn" title="Налаштування GitHub">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  <a class="btn sec hide-m" href="./" target="_blank" rel="noopener">Вітрина ↗</a>
+</div></header>
+
+<main class="wrap">
+  <section class="top">
+    <div>
+      <h1>Керування <em>цінами</em></h1>
+      <p>Масова зміна цін за фільтром або вибраними товарами, або ручне редагування в таблиці. Нічого не змінюється на сайті, доки ви не натиснете «Зберегти».</p>
+    </div>
+    <div class="stats">
+      <div class="stat glass"><b id="stTotal">0</b><span>товарів</span></div>
+      <div class="stat glass"><b id="stEdited">0</b><span>з ручною ціною</span></div>
+      <div class="stat glass"><b id="stSale">0</b><span>зі знижкою</span></div>
+    </div>
+  </section>
+
+  <section class="bulk glass">
+    <h2>Масова зміна</h2>
+    <div class="brow">
+      <div class="field"><label for="act">Дія</label>
+        <select class="sel" id="act">
+          <option value="pct">Змінити на %</option>
+          <option value="mul">Помножити на (націнка)</option>
+          <option value="add">Додати / відняти ₴</option>
+          <option value="set">Встановити ціну ₴</option>
+          <option value="sale">Знижка % (стара ціна закреслена)</option>
+          <option value="unsale">Прибрати знижку</option>
+          <option value="round">Лише округлити</option>
+          <option value="reset">Повернути ціни з фіду</option>
+        </select></div>
+      <div class="field" id="valField"><label for="val" id="valLabel">Значення</label>
+        <input class="inp num" id="val" type="number" step="any" inputmode="decimal" value="10"></div>
+      <div class="field"><label for="rnd">Округлення</label>
+        <select class="sel" id="rnd">
+          <option value="0">Без округлення</option>
+          <option value="10" selected>До 10 ₴</option>
+          <option value="50">До 50 ₴</option>
+          <option value="100">До 100 ₴</option>
+          <option value="9">На …9 ₴ (1 249)</option>
+          <option value="99">На …99 ₴ (1 299)</option>
+        </select></div>
+      <div class="field"><label>База</label>
+        <div class="seg" id="base"><button class="on" data-v="cur">Поточна</button><button data-v="orig">З фіду</button></div></div>
+      <div class="field"><label>Застосувати до</label>
+        <div class="seg" id="scope"><button class="on" data-v="filter">Усіх за фільтром</button><button data-v="sel">Вибраних</button></div></div>
+      <div class="field"><label>&nbsp;</label><button class="btn pri" id="apply">Застосувати</button></div>
+    </div>
+    <div class="presets" id="presets">
+      <button data-a="mul" data-v="1.3">Націнка ×1.3</button>
+      <button data-a="mul" data-v="1.5">Націнка ×1.5</button>
+      <button data-a="mul" data-v="1.6">Націнка ×1.6</button>
+      <button data-a="mul" data-v="2">Націнка ×2</button>
+      <button data-a="pct" data-v="5">+5%</button>
+      <button data-a="pct" data-v="-5">−5%</button>
+      <button data-a="sale" data-v="15">Знижка 15%</button>
+      <button data-a="sale" data-v="30">Знижка 30%</button>
+    </div>
+    <div class="preview" id="preview"></div>
+  </section>
+
+  <div class="filters">
+    <div class="search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <input type="search" id="q" placeholder="Пошук за назвою або артикулом">
+    </div>
+    <div class="seg" id="dept"><button class="on" data-v="">Усі</button><button data-v="shoes">Взуття</button><button data-v="leather">Сумки</button></div>
+    <select class="sel" id="cat"><option value="">Усі категорії</option></select>
+    <select class="sel" id="show">
+      <option value="">Усі товари</option>
+      <option value="edited">Змінені вручну</option>
+      <option value="sale">Зі знижкою</option>
+      <option value="unsaved">Незбережені зміни</option>
+    </select>
+    <label class="chk"><input type="checkbox" id="selAll"> Вибрати всі за фільтром</label>
+    <div class="count" id="count"></div>
+  </div>
+
+  <section class="list glass" id="list"></section>
+  <button class="btn sec more" id="more" hidden>Показати ще</button>
+</main>
+
+<div class="dock glass" id="dock">
+  <span id="dockTxt">Є зміни</span>
+  <button class="btn ghost" id="download" title="Завантажити prices.js">Файл</button>
+  <button class="btn pri" id="save">Зберегти на сайт</button>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <h3 id="mTitle">Публікація</h3>
+  <p>Ціни зберігаються у файл <code>data/prices.js</code> у вашому репозиторії GitHub, після чого Vercel сам оновлює сайт (1–2 хв).
+    Токен зберігається лише в цьому браузері.</p>
+  <div class="field"><label for="gOwner">Власник репозиторію</label><input class="inp" id="gOwner"></div>
+  <div class="field"><label for="gRepo">Репозиторій</label><input class="inp" id="gRepo"></div>
+  <div class="field"><label for="gBranch">Гілка, з якої деплоїть Vercel</label><input class="inp" id="gBranch"></div>
+  <div class="field"><label for="gPath">Шлях до файлу</label><input class="inp" id="gPath"></div>
+  <div class="field"><label for="gToken">GitHub токен</label><input class="inp" id="gToken" type="password" autocomplete="off" placeholder="github_pat_…">
+    <div class="note">Створіть на <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Fine-grained token</a>:
+      лише цей репозиторій, дозвіл <b>Contents: Read and write</b>.</div></div>
+  <div class="acts">
+    <button class="btn ghost" id="mClose">Скасувати</button>
+    <button class="btn pri" id="mSave">Зберегти налаштування</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="data/catalog.js"></script>
+<script src="data/4cases.js" onerror="void 0"></script>
+<script src="data/prices.js" onerror="void 0"></script>
+<script src="ambient.js" defer></script>
+<script>
+/* ================= дані ================= */
+const $ = s => document.querySelector(s);
+const money = n => n == null || isNaN(n) ? '—' : Math.round(n).toLocaleString('uk-UA') + ' ₴';
+const ITEMS = [
+  ...DATA.map(p => ({...p, d:'shoes'})),
+  ...(typeof DATA_4C !== 'undefined' ? DATA_4C.map(p => ({...p, d:'leather'})) : [])
+].map(p => ({id:p.id, t:p.t, c:p.c, d:p.d, img:(p.img||[])[0], sku:(p.sp && p.sp.sku) || '',
+             p0:p.p, o0:p.o ?? null}));
+const BYID = new Map(ITEMS.map(x => [x.id, x]));
+const SAVED = typeof PRICES !== 'undefined' ? PRICES : {};
+
+/* поточний стан цін: id -> {p, o}; спочатку — збережене на сайті */
+let cur = new Map(ITEMS.map(x => {
+  const s = SAVED[x.id];
+  return [x.id, {p: s && s.p != null ? s.p : x.p0, o: s && 'o' in s ? s.o : x.o0}];
+}));
+let savedSnap = snapshot();
+const history = [];
+const selected = new Set();
+const PAGE = 120;
+const F = {q:'', dept:'', cat:'', show:'', shown:PAGE};
+
+function snapshot(){ return JSON.stringify([...cur]); }
+function isEdited(x){ const c = cur.get(x.id); return c.p !== x.p0 || (c.o ?? null) !== x.o0; }
+function isUnsaved(x){ const s = SAVED[x.id], c = cur.get(x.id);
+  const sp = s && s.p != null ? s.p : x.p0, so = s && 'o' in s ? s.o : x.o0;
+  return c.p !== sp || (c.o ?? null) !== (so ?? null); }
+
+/* ================= округлення та дії ================= */
+function round(v, mode){
+  if(!isFinite(v)) return v;
+  v = Math.max(0, v);
+  switch(mode){
+    case '10': return Math.round(v / 10) * 10;
+    case '50': return Math.round(v / 50) * 50;
+    case '100': return Math.round(v / 100) * 100;
+    case '9': return Math.max(9, Math.round(v / 10) * 10 - 1);
+    case '99': return Math.max(99, Math.round(v / 100) * 100 - 1);
+    default: return Math.round(v * 100) / 100;
+  }
+}
+function compute(x, act, val, rnd, base){
+  const c = cur.get(x.id);
+  const b = base === 'orig' ? x.p0 : c.p;
+  switch(act){
+    case 'pct':   return {p: round(b * (1 + val / 100), rnd), o: c.o};
+    case 'mul':   return {p: round(b * val, rnd), o: c.o};
+    case 'add':   return {p: round(b + val, rnd), o: c.o};
+    case 'set':   return {p: round(val, rnd), o: c.o};
+    case 'round': return {p: round(b, rnd), o: c.o};
+    case 'sale': {
+      const full = c.o && c.o > c.p ? c.o : b;          // повна ціна стає закресленою
+      return {p: round(full * (1 - val / 100), rnd), o: full};
+    }
+    case 'unsale': return {p: c.o && c.o > c.p ? c.o : c.p, o: null};
+    case 'reset':  return {p: x.p0, o: x.o0};
+  }
+}
+
+/* ================= фільтр ================= */
+function visible(){
+  const q = F.q.toLowerCase();
+  return ITEMS.filter(x =>
+    (!F.dept || x.d === F.dept) && (!F.cat || x.c === F.cat) &&
+    (!q || `${x.t} ${x.sku} ${x.id}`.toLowerCase().includes(q)) &&
+    (F.show !== 'edited' || isEdited(x)) &&
+    (F.show !== 'sale' || (cur.get(x.id).o ?? 0) > cur.get(x.id).p) &&
+    (F.show !== 'unsaved' || isUnsaved(x)));
+}
+function targets(){
+  return opt('#scope') === 'sel' ? ITEMS.filter(x => selected.has(x.id)) : visible();
+}
+function opt(sel){ return $(sel + ' button.on').dataset.v; }
+
+/* ================= рендер ================= */
+function rowHTML(x){
+  const c = cur.get(x.id), dp = x.p0 ? (c.p - x.p0) / x.p0 * 100 : 0;
+  const d = Math.abs(dp) < .05 ? '' : `<span class="delta ${dp > 0 ? 'up' : 'down'}">${dp > 0 ? '+' : ''}${dp.toFixed(0)}%</span>`;
+  return `<div class="row ${isEdited(x) ? 'changed' : ''}" data-id="${x.id}">
+    <input type="checkbox" data-sel ${selected.has(x.id) ? 'checked' : ''} aria-label="Вибрати">
+    <img src="${x.img || ''}" alt="" loading="lazy">
+    <div><div class="t">${x.t}</div><div class="m">${x.c}${x.sku ? ' · ' + x.sku : ''}</div></div>
+    <div class="orig">${money(x.p0)}${x.o0 ? ` <s>${money(x.o0)}</s>` : ''}</div>
+    <input class="pin new" data-f="p" type="number" inputmode="decimal" min="0" step="any" value="${c.p}" aria-label="Ціна">
+    <input class="pin old c-old" data-f="o" type="number" inputmode="decimal" min="0" step="any" value="${c.o ?? ''}" placeholder="—" aria-label="Стара ціна">
+    ${d || '<span class="delta"></span>'}
+  </div>`;
+}
+function draw(){
+  const rows = visible();
+  $('#count').textContent = `${rows.length} з ${ITEMS.length}`;
+  $('#list').innerHTML = rows.length ? `<div class="row head"><span></span><span></span><span>Товар</span>
+      <span class="h-orig">Фід</span><span>Ціна</span><span class="h-old">Стара ціна</span><span class="h-delta">Δ</span></div>` +
+      rows.slice(0, F.shown).map(rowHTML).join('')
+    : `<div class="empty">Нічого не знайдено</div>`;
+  $('#more').hidden = rows.length <= F.shown;
+  $('#more').textContent = `Показати ще · ${rows.length - F.shown}`;
+  $('#selAll').checked = rows.length > 0 && rows.every(x => selected.has(x.id));
+  stats(); preview();
+}
+function stats(){
+  $('#stTotal').textContent = ITEMS.length.toLocaleString('uk-UA');
+  $('#stEdited').textContent = ITEMS.filter(isEdited).length.toLocaleString('uk-UA');
+  $('#stSale').textContent = ITEMS.filter(x => (cur.get(x.id).o ?? 0) > cur.get(x.id).p).length.toLocaleString('uk-UA');
+  const n = ITEMS.filter(isUnsaved).length;
+  $('#dock').classList.toggle('on', n > 0);
+  $('#dockTxt').textContent = `Незбережено: ${n} ${plural(n, 'ціна', 'ціни', 'цін')}`;
+  $('#undo').disabled = !history.length;
+}
+function plural(n, a, b, c){ const m = n % 10, h = n % 100;
+  return m === 1 && h !== 11 ? a : m >= 2 && m <= 4 && (h < 10 || h >= 20) ? b : c; }
+function preview(){
+  const act = $('#act').value, val = parseFloat($('#val').value), rnd = $('#rnd').value, base = opt('#base');
+  const needVal = !['unsale', 'round', 'reset'].includes(act);
+  $('#valField').style.display = needVal ? '' : 'none';
+  $('#valLabel').textContent = {pct:'Відсоток, %', mul:'Множник', add:'Сума, ₴', set:'Ціна, ₴', sale:'Знижка, %'}[act] || 'Значення';
+  const T = targets();
+  if(!T.length){ $('#preview').innerHTML = opt('#scope') === 'sel' ? 'Не вибрано жодного товару — позначте рядки в таблиці.' : 'Немає товарів за фільтром.'; return; }
+  if(needVal && !isFinite(val)){ $('#preview').textContent = 'Вкажіть значення.'; return; }
+  const sample = T[0], r = compute(sample, act, val, rnd, base);
+  const sum0 = T.reduce((s, x) => s + cur.get(x.id).p, 0);
+  const sum1 = T.reduce((s, x) => s + compute(x, act, val, rnd, base).p, 0);
+  const avg = sum0 ? (sum1 - sum0) / sum0 * 100 : 0;
+  $('#preview').innerHTML = `Зміниться <b>${T.length}</b> ${plural(T.length, 'товар', 'товари', 'товарів')}, у середньому
+    <b>${avg >= 0 ? '+' : ''}${avg.toFixed(1)}%</b>. Напр.: «${sample.t.slice(0, 48)}${sample.t.length > 48 ? '…' : ''}» ${money(cur.get(sample.id).p)} → <b>${money(r.p)}</b>${r.o ? ` (стара ${money(r.o)})` : ''}.`;
+}
+
+/* ================= зміни ================= */
+function commit(changes){                     // changes: [[id, {p,o}]]
+  history.push(changes.map(([id]) => [id, {...cur.get(id)}]));
+  if(history.length > 50) history.shift();
+  changes.forEach(([id, v]) => cur.set(id, {p: v.p, o: v.o && v.o > v.p ? v.o : null}));
+}
+$('#apply').onclick = () => {
+  const act = $('#act').value, val = parseFloat($('#val').value), rnd = $('#rnd').value, base = opt('#base');
+  const T = targets();
+  if(!T.length) return toast('Немає товарів для зміни', true);
+  if(!['unsale', 'round', 'reset'].includes(act) && !isFinite(val)) return toast('Вкажіть значення', true);
+  if(T.length > 50 && !confirm(`Змінити ціни для ${T.length} товарів?`)) return;
+  commit(T.map(x => [x.id, compute(x, act, val, rnd, base)]));
+  draw(); toast(`Оновлено ${T.length} ${plural(T.length, 'ціну', 'ціни', 'цін')}`);
+};
+$('#presets').onclick = e => { const b = e.target.closest('button'); if(!b) return;
+  $('#act').value = b.dataset.a; $('#val').value = b.dataset.v; preview(); };
+['#act', '#val', '#rnd'].forEach(s => $(s).addEventListener('input', preview));
+
+$('#list').addEventListener('change', e => {
+  const row = e.target.closest('.row'); if(!row) return;
+  const id = row.dataset.id;
+  if(e.target.matches('[data-sel]')){
+    e.target.checked ? selected.add(id) : selected.delete(id); preview(); return;
+  }
+  const f = e.target.dataset.f; if(!f) return;
+  const v = e.target.value === '' ? null : Math.max(0, parseFloat(e.target.value));
+  if(f === 'p' && (v == null || !isFinite(v))){ e.target.value = cur.get(id).p; return toast('Ціна не може бути порожньою', true); }
+  const next = {...cur.get(id), [f]: v};
+  commit([[id, next]]);
+  row.outerHTML = rowHTML(BYID.get(id));
+  stats(); preview();
+});
+$('#list').addEventListener('keydown', e => {          // Enter — до наступного рядка
+  if(e.key !== 'Enter' || !e.target.matches('.pin')) return;
+  e.preventDefault();
+  const f = e.target.dataset.f, row = e.target.closest('.row');
+  e.target.blur();
+  const next = document.querySelector(`.row[data-id="${row.dataset.id}"]`)?.nextElementSibling?.querySelector(`[data-f="${f}"]`);
+  next && next.focus();
+});
+$('#selAll').onchange = e => { visible().forEach(x => e.target.checked ? selected.add(x.id) : selected.delete(x.id)); draw(); };
+
+function undo(){
+  const last = history.pop(); if(!last) return;
+  last.forEach(([id, v]) => cur.set(id, v)); draw(); toast('Скасовано');
+}
+$('#undo').onclick = undo;
+addEventListener('keydown', e => {
+  if((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.target.matches('input')){ e.preventDefault(); undo(); }
+  if(e.key === 'Escape') closeModal();
+});
+
+/* ================= фільтри UI ================= */
+function fillCats(){
+  const cats = [...new Set(ITEMS.filter(x => !F.dept || x.d === F.dept).map(x => x.c))];
+  $('#cat').innerHTML = '<option value="">Усі категорії</option>' +
+    cats.map(c => `<option ${c === F.cat ? 'selected' : ''}>${c}</option>`).join('');
+}
+function segHandler(sel, fn){ $(sel).onclick = e => { const b = e.target.closest('button'); if(!b) return;
+  $(sel).querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); fn(b.dataset.v); }; }
+segHandler('#dept', v => { F.dept = v; F.cat = ''; F.shown = PAGE; fillCats(); draw(); });
+segHandler('#base', preview);
+segHandler('#scope', preview);
+$('#cat').onchange = e => { F.cat = e.target.value; F.shown = PAGE; draw(); };
+$('#show').onchange = e => { F.show = e.target.value; F.shown = PAGE; draw(); };
+let qt; $('#q').oninput = e => { clearTimeout(qt); qt = setTimeout(() => { F.q = e.target.value.trim(); F.shown = PAGE; draw(); }, 200); };
+$('#more').onclick = () => { F.shown += PAGE; draw(); };
+
+/* ================= збереження ================= */
+function pricesFile(){
+  const out = {};
+  ITEMS.forEach(x => { if(isEdited(x)){ const c = cur.get(x.id); out[x.id] = {p: c.p, o: c.o ?? null}; } });
+  return '/* ÉLORA — ручні ціни з admin.html. Перекривають ціни фідів: {id: {p: ціна, o: стара ціна | null}} */\n' +
+         'const PRICES=' + JSON.stringify(out) + ';\n';
+}
+$('#download').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([pricesFile()], {type:'text/javascript'}));
+  a.download = 'prices.js'; a.click(); URL.revokeObjectURL(a.href);
+  toast('prices.js завантажено — покладіть його в папку data/');
+};
+
+const CFG_KEY = 'elora-admin-gh';
+const DEF = {owner:'artempojda27-ux', repo:'-lora', branch:'main', path:'elora-deploy/data/prices.js', token:''};
+function cfg(){ try{ return {...DEF, ...JSON.parse(localStorage.getItem(CFG_KEY) || '{}')}; }catch(e){ return {...DEF}; } }
+function openModal(){
+  const c = cfg();
+  $('#gOwner').value = c.owner; $('#gRepo').value = c.repo; $('#gBranch').value = c.branch;
+  $('#gPath').value = c.path; $('#gToken').value = c.token;
+  $('#modal').classList.add('on'); $('#scrim').classList.add('on');
+}
+function closeModal(){ $('#modal').classList.remove('on'); $('#scrim').classList.remove('on'); }
+$('#settingsBtn').onclick = openModal;
+$('#mClose').onclick = closeModal; $('#scrim').onclick = closeModal;
+$('#mSave').onclick = () => {
+  const c = {owner:$('#gOwner').value.trim(), repo:$('#gRepo').value.trim(), branch:$('#gBranch').value.trim() || 'main',
+             path:$('#gPath').value.trim().replace(/^\/+/, ''), token:$('#gToken').value.trim()};
+  try{ localStorage.setItem(CFG_KEY, JSON.stringify(c)); }catch(e){ return toast('Браузер не дозволяє зберегти налаштування', true); }
+  closeModal(); toast('Налаштування збережено');
+  if(pendingSave){ pendingSave = false; save(); }
+};
+
+let pendingSave = false;
+const b64 = s => { const bytes = new TextEncoder().encode(s); let bin = '';
+  for(let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(bin); };
+async function save(){
+  const c = cfg();
+  if(!c.token){ pendingSave = true; openModal(); return toast('Додайте GitHub токен'); }
+  const btn = $('#save'); btn.disabled = true; btn.textContent = 'Збереження…';
+  const api = `https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${c.path.split('/').map(encodeURIComponent).join('/')}`;
+  const H = {Authorization:`Bearer ${c.token}`, Accept:'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28'};
+  try{
+    let sha;
+    const head = await fetch(`${api}?ref=${encodeURIComponent(c.branch)}`, {headers:H, cache:'no-store'});
+    if(head.ok) sha = (await head.json()).sha;
+    else if(head.status !== 404) throw new Error(await errText(head));
+    const n = ITEMS.filter(isUnsaved).length;
+    const put = await fetch(api, {method:'PUT', headers:H, body:JSON.stringify({
+      message:`Ціни: оновлено ${n} ${plural(n, 'позицію', 'позиції', 'позицій')} через admin.html`,
+      content:b64(pricesFile()), branch:c.branch, ...(sha ? {sha} : {})})});
+    if(!put.ok) throw new Error(await errText(put));
+    ITEMS.forEach(x => { if(isEdited(x)){ const v = cur.get(x.id); SAVED[x.id] = {p:v.p, o:v.o ?? null}; } else delete SAVED[x.id]; });
+    savedSnap = snapshot(); draw();
+    toast('Збережено. Сайт оновиться за 1–2 хвилини');
+  }catch(e){
+    toast(e.message, true);
+  }finally{
+    btn.disabled = false; btn.textContent = 'Зберегти на сайт';
+  }
+}
+async function errText(r){
+  const j = await r.json().catch(() => ({}));
+  if(r.status === 401) return 'Токен недійсний або прострочений';
+  if(r.status === 403) return 'Токен не має дозволу Contents: Read and write';
+  if(r.status === 404) return 'Репозиторій або гілку не знайдено — перевірте налаштування';
+  if(r.status === 409) return 'Файл змінився на GitHub — оновіть сторінку';
+  return j.message || `Помилка GitHub (${r.status})`;
+}
+$('#save').onclick = save;
+addEventListener('beforeunload', e => { if(snapshot() !== savedSnap && ITEMS.some(isUnsaved)){ e.preventDefault(); e.returnValue = ''; } });
+
+let tt;
+function toast(msg, err){ const t = $('#toast'); t.textContent = msg; t.classList.toggle('err', !!err); t.classList.add('on');
+  clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), err ? 4200 : 2600); }
+
+fillCats(); draw();
+</script>
+</body>
+</html>

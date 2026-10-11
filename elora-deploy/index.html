@@ -48,6 +48,22 @@ input,select{font:inherit}
 @media(max-width:640px){.wrapx{padding:0 16px}}
 .serif{font-family:var(--serif)}
 
+/* ================= ambient: шовкові переливи + лінії (ambient.js) ================= */
+.ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.ambient i{position:absolute;border-radius:50%;filter:blur(70px);will-change:transform}
+.ambient i:nth-child(1){width:62vmax;height:62vmax;left:-18vmax;top:-22vmax;
+  background:radial-gradient(circle,rgba(246,205,176,.85),rgba(246,205,176,0) 62%);animation:silk1 34s ease-in-out infinite alternate}
+.ambient i:nth-child(2){width:56vmax;height:56vmax;right:-20vmax;top:18vh;
+  background:radial-gradient(circle,rgba(226,206,178,.9),rgba(226,206,178,0) 62%);animation:silk2 41s ease-in-out infinite alternate}
+.ambient i:nth-child(3){width:48vmax;height:48vmax;left:22vw;bottom:-26vmax;
+  background:radial-gradient(circle,rgba(238,170,128,.42),rgba(238,170,128,0) 62%);animation:silk3 47s ease-in-out infinite alternate}
+@keyframes silk1{to{transform:translate(16vw,12vh) scale(1.15)}}
+@keyframes silk2{to{transform:translate(-18vw,-10vh) scale(.9)}}
+@keyframes silk3{to{transform:translate(12vw,-16vh) scale(1.2)}}
+.ambient canvas{position:absolute;inset:0;width:100%;height:100%}
+.ambient::after{content:'';position:absolute;inset:0;opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+
 /* ================= header: стекло apple.com ================= */
 header{position:fixed;inset:0 0 auto;z-index:60;
   background:rgba(247,243,236,.72);backdrop-filter:saturate(1.8) blur(20px);
@@ -135,7 +151,7 @@ header.menu{z-index:95;background:transparent!important;
 
 /* ================= hero: разворот, как витрина Hermès ================= */
 .hero{position:relative;height:100svh;min-height:640px;max-height:1100px;display:grid;grid-template-columns:1fr 1fr;
-  align-items:stretch;overflow:hidden;isolation:isolate;background:var(--bg)}
+  align-items:stretch;overflow:hidden;isolation:isolate}
 .hero-in{align-self:center;padding:90px 6vw 60px 9vw;max-width:720px;position:relative;z-index:2;
   will-change:opacity,transform;animation:rise 1.4s var(--ease) both}
 @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
@@ -503,6 +519,7 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
 </script>
 </head>
 <body>
+<div class="ambient" aria-hidden="true"><i></i><i></i><i></i><canvas></canvas></div>
 <header id="hd"><div class="wrapx hin">
   <button class="burger" id="burger" aria-label="Меню" aria-expanded="false"><i></i><i></i></button>
   <div class="mark">ÉLORA</div>
@@ -679,6 +696,8 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
 
 <script src="data/catalog.js"></script>
 <script src="data/4cases.js" onerror="void 0"></script>
+<script src="data/prices.js" onerror="void 0"></script>
+<script src="ambient.js" defer></script>
 <script>
 const ASSETS = {hero:'assets/hero.jpg', mono:'assets/mono.png'};
 
@@ -693,6 +712,12 @@ if(typeof DATA_4C !== 'undefined'){
   DATA_4C.forEach(p => { p.d = 'leather'; p.sz = p.sz || []; p.sp = p.sp || {}; DATA.push(p); });
   CATS.push(...CATS_4C.map(c => ({...c, d:'leather'})));
 }
+/* ручні ціни з адмін-панелі (admin.html -> data/prices.js): {id: {p, o}} поверх фідів */
+if(typeof PRICES !== 'undefined') DATA.forEach(p => {
+  const x = PRICES[p.id]; if(!x) return;
+  if(x.p != null) p.p = x.p;
+  if('o' in x) p.o = x.o;
+});
 const deptCount = id => DATA.filter(p => p.d === id).length;
 
 /* цвета поставщика -> образцы */
