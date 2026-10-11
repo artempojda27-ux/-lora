@@ -1,0 +1,93 @@
+# Автооновлення каталогу ÉLORA: щодня тягне свіжі фіди TAPULI та 4cases,
+# докачує нові фото, прибирає розпродане і комітить у main — Vercel сам передеплоїть.
+# Запуск вручну: вкладка Actions → «Оновлення каталогу» → Run workflow, або кнопка в /admin.
+name: Оновлення каталогу
+
+on:
+  schedule:
+    - cron: '17 3 * * *'   # щодня о 06:17 за Києвом (03:17 UTC)
+  workflow_dispatch:
+    inputs:
+      markup:
+        description: 'Націнка для цін 4cases (1 — як на сайті 4cases, 1.6 — +60%)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: catalog-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: elora-deploy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Залежності
+        run: pip install --quiet Pillow
+
+      - name: Взуття (TAPULI)
+        id: tapuli
+        continue-on-error: true
+        run: |
+          python3 import_tapuli.py
+          python3 check_catalog.py data/catalog.js DATA
+
+      - name: Відкат взуття при помилці
+        if: steps.tapuli.outcome == 'failure'
+        run: |
+          git checkout -- data/catalog.js img/tp
+          git clean -fdq img/tp
+
+      - name: Сумки та аксесуари (4cases)
+        id: fourcases
+        continue-on-error: true
+        env:
+          MARKUP: ${{ github.event.inputs.markup || vars.MARKUP_4CASES || '1' }}
+        run: |
+          python3 import_4cases.py --markup "$MARKUP"
+          python3 check_catalog.py data/4cases.js DATA_4C
+
+      - name: Відкат 4cases при помилці
+        if: steps.fourcases.outcome == 'failure'
+        run: |
+          git checkout -- data/4cases.js img/4c
+          git clean -fdq img/4c
+
+      - name: Коміт змін
+        run: |
+          git add -A data img
+          if git diff --cached --quiet; then
+            echo "Каталог не змінився"
+            exit 0
+          fi
+          git config user.name "elora-catalog-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "Каталог: автооновлення $(date -u +%Y-%m-%d)" \
+            -m "$(git diff --cached --stat -- data | tail -1)"
+          git push origin HEAD:main
+
+      - name: Підсумок
+        if: always()
+        run: |
+          {
+            echo "### Оновлення каталогу"
+            echo "- Взуття (TAPULI): ${{ steps.tapuli.outcome }}"
+            echo "- Сумки (4cases): ${{ steps.fourcases.outcome }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.tapuli.outcome }}" = failure ] || [ "${{ steps.fourcases.outcome }}" = failure ]; then
+            echo "::warning::Одне з джерел не оновилось — на сайті лишилась попередня версія цього розділу"
+          fi
