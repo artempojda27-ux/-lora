@@ -7,6 +7,7 @@
 
 const UA = {'User-Agent': 'Mozilla/5.0 (ELORA stock check)'};
 const TAPULI = () => `https://tapuli.shop/price-xml/?datefrom=2020-01-01&dateto=${new Date().toISOString().slice(0, 10)}&xml-feed=1&platform=standard`;
+const { products } = require('./_catalog');
 const cache = {};   // живе між викликами, поки функція «тепла»
 
 async function get(url, ms) {
@@ -43,14 +44,6 @@ const tapuliStock = () => cached('tapuli', 5 * 60e3, async () => {
   return set;
 });
 
-/* посилання на сторінки Podium беремо з власного data/podium.js */
-const podiumUrls = host => cached('pdurls', 30 * 60e3, async () => {
-  const js = await get(`https://${host}/data/podium.js`, 4000);
-  if (!js) return null;
-  const m = js.match(/const DATA_PD=(\[[\s\S]*?\]);/);
-  return m ? new Map(JSON.parse(m[1]).map(p => [p.id, p.u])) : null;
-});
-
 async function one(item, host) {
   const {id, size} = item;
   if (/^\d+$/.test(id)) {                                     // TAPULI
@@ -65,7 +58,7 @@ async function one(item, host) {
     return m ? Number(m[1] || 0) > 0 : false;
   }
   if (id.startsWith('pd-')) {                                 // Podium
-    const urls = await podiumUrls(host), url = urls && urls.get(id);
+    const cat = await products(host), url = cat && cat.get(id) && cat.get(id).u;
     if (!url) return null;
     const page = await get(url, 7000);
     if (page === null) return null;

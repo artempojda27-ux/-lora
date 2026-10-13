@@ -1,0 +1,26 @@
+{
+  "tapuli": {
+    "name": "TAPULI",
+    "site": "https://tapuli.shop",
+    "phone": "+38 097 073 55 33",
+    "telegram": "https://t.me/tapuli_ua",
+    "instagram": "https://www.instagram.com/t.a.p.u.l.i__ua/",
+    "email": null
+  },
+  "4cases": {
+    "name": "4cases",
+    "site": "https://4cases.com.ua",
+    "phone": "+38 093 767 48 61",
+    "telegram": null,
+    "instagram": null,
+    "email": "4casesmanager@gmail.com"
+  },
+  "podium": {
+    "name": "Podium",
+    "site": "https://podium.ua",
+    "phone": "+38 073 705 77 70",
+    "telegram": "https://t.me/podiumbagswallets",
+    "instagram": "https://www.instagram.com/podium.accessories/",
+    "email": "sales@podium.ua"
+  }
+}

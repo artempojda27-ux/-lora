@@ -1056,6 +1056,8 @@ let cur = null, curImg = 0, pick = null;
 
 function openProduct(p){
   $('#psheet').classList.remove('doc');
+  /* посилання на товар: …/#p=<id> (так приходить у замовленні в Telegram) */
+  if(location.hash !== '#p=' + encodeURIComponent(p.id)) history.replaceState(null, '', '#p=' + encodeURIComponent(p.id));
   cur = p; curImg = 0; pick = p.sz.length ? null : ONE;
   const specs = Object.entries(p.sp).map(([k,v])=>
     `<div><dt>${LABELS[k]||k}</dt><dd>${v}</dd></div>`).join('');
@@ -1406,9 +1408,17 @@ document.addEventListener('click', e => {
   e.preventDefault(); openPage(a.dataset.page);
 });
 if(PAGES[location.hash.slice(1)]) setTimeout(() => openPage(location.hash.slice(1)), 300);
+function openFromHash(){
+  const m = location.hash.match(/^#p=(.+)$/); if(!m) return;
+  const p = DATA.find(x => x.id === decodeURIComponent(m[1]));
+  if(p) openProduct(p); else { history.replaceState(null, '', location.pathname); toast('Цього товару вже немає в наявності'); }
+}
+addEventListener('hashchange', openFromHash);
+setTimeout(openFromHash, 300);
 
 /* ============ close handling ============ */
 function closeAll(){
+  if(/^#(p=|delivery|returns|sizes)/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
   $('#psheet').classList.remove('on');
   $('#cart').classList.remove('on');
   $('#scrim').classList.remove('on');
