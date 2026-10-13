@@ -1,4 +1,4 @@
-/* ÉLORA — фон «шовк»: WebGL-шейдер атласних складок кольору слонової кістки з м'якими відблисками.
+/* ÉLORA — фон «шовк»: WebGL-шейдер атласних складок перлинно-сірого кольору з холодними відблисками.
    Підключення: <div class="ambient"><i></i><i></i><i></i><canvas></canvas></div> і цей скрипт.
    Малюється в зниженій роздільності (тканина гладка), ~30 кадрів/с, пауза у фоновій вкладці,
    при reduced-motion — один статичний кадр. Без WebGL — запасний фон: теплі переливи й тонкі лінії. */
@@ -28,15 +28,15 @@ void main(){
   vec3 H=normalize(L+vec3(0.,0.,1.));
   float nh=clamp(dot(N,H),0.,1.);
   float spec=pow(nh,90.)*.42+pow(nh,16.)*.07;
-  vec3 shade=vec3(.80,.72,.62), mid=vec3(.93,.89,.83), light=vec3(.985,.97,.945);
+  vec3 shade=vec3(.70,.72,.75), mid=vec3(.86,.87,.885), light=vec3(.955,.96,.968);
   vec3 col=mix(shade,mid,smoothstep(.05,.6,diff));
   col=mix(col,light,smoothstep(.55,1.,diff));
-  col+=spec*vec3(1.,.96,.88);
+  col+=spec*vec3(.96,.98,1.);
   vec3 over=max(col-vec3(.955),0.);
   col=min(col,vec3(.955))+vec3(.04,.035,.028)*(1.-exp(-over*14.));
   float x=uv.x/(r.x/r.y);
-  col=mix(col,col*vec3(1.02,.94,.86),.25*smoothstep(.4,1.,x)*(1.-uv.y));
-  col=mix(col,vec3(.968,.952,.925),.16);
+  col=mix(col,col*vec3(.96,.99,1.04),.3*smoothstep(.4,1.,x)*(1.-uv.y));
+  col=mix(col,vec3(.905,.91,.915),.16);
   gl_FragColor=vec4(col,1.);
 }`;
     const mk = (type, src) => { const s = g.createShader(type); g.shaderSource(s, src); g.compileShader(s);
@@ -92,7 +92,7 @@ void main(){
           + Math.sin(x * .0009 + t * .04) * 70;
         x < -10 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
-      ctx.strokeStyle = accent ? 'rgba(226,96,26,.16)' : 'rgba(59,42,30,.075)';
+      ctx.strokeStyle = accent ? 'rgba(80,96,118,.16)' : 'rgba(20,24,30,.07)';
       ctx.lineWidth = accent ? 1.1 : .8;
       ctx.stroke();
     }

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Єдиний фон для фото товарів: вирізає товар (rembg, модель isnet-general-use) і ставить
-його по центру на фірмове тло ÉLORA (тепла слонова кістка з м'яким світлом) з легкою тінню.
+його по центру на фірмове тло ÉLORA (холодний світло-сірий, як у каталогах галерейного типу) з легкою тінню.
 Канва 4:5 (800×1000), WebP.
 
     python3 tools/unify.py img/4c img/tp img/pd   # обробити всі ще не оброблені фото
@@ -12,7 +12,7 @@ import io, os, sys
 from PIL import Image, ImageFilter, ImageDraw
 
 W, H = 800, 1000
-BG_TOP, BG_BOTTOM = (247, 243, 236), (236, 228, 216)   # #F7F3EC -> #ECE4D8
+BG_TOP, BG_BOTTOM = (238, 239, 241), (221, 223, 227)   # #EEEFF1 -> #DDDFE3
 MARK = 'img/.unified'
 _session = None
 
@@ -26,22 +26,22 @@ def _bg():
     glow = Image.new('L', (W, H), 0)                    # м'яке світло зверху по центру
     ImageDraw.Draw(glow).ellipse((W * .05, -H * .25, W * .95, H * .55), fill=70)
     glow = glow.filter(ImageFilter.GaussianBlur(120))
-    return Image.composite(Image.new('RGB', (W, H), (252, 249, 244)), bg, glow)
+    return Image.composite(Image.new('RGB', (W, H), (248, 249, 250)), bg, glow)
 
 
 BG = None
 
 
 def grade(im):
-    """Фото з моделлю: кадр 4:5 і м'яке тепле тонування в палітрі ÉLORA."""
+    """Фото з моделлю: кадр 4:5 і стримане холодне тонування в палітрі ÉLORA."""
     from PIL import ImageOps, ImageEnhance
     im = ImageOps.fit(im.convert('RGB'), (W, H), Image.LANCZOS, centering=(.5, .45))
-    im = ImageEnhance.Color(im).enhance(.86)
-    im = ImageEnhance.Contrast(im).enhance(.94)
+    im = ImageEnhance.Color(im).enhance(.72)
+    im = ImageEnhance.Contrast(im).enhance(1.06)
     r, g, b = im.split()
-    r = r.point(lambda v: min(255, round(v * 1.035 + 6)))
-    g = g.point(lambda v: min(255, round(v * 1.0 + 4)))
-    b = b.point(lambda v: min(255, round(v * .93 + 2)))
+    r = r.point(lambda v: min(255, round(v * .97)))
+    g = g.point(lambda v: min(255, round(v * .99 + 1)))
+    b = b.point(lambda v: min(255, round(v * 1.03 + 4)))
     return Image.merge('RGB', (r, g, b))
 
 
@@ -74,11 +74,11 @@ def unify(im):
     sw = cut.width * .82
     ImageDraw.Draw(sh).ellipse((W / 2 - sw / 2, y + cut.height - 16, W / 2 + sw / 2, y + cut.height + 22), fill=95)
     sh = sh.filter(ImageFilter.GaussianBlur(18))
-    out.paste(Image.new('RGB', (W, H), (120, 98, 76)), (0, 0), sh)
+    out.paste(Image.new('RGB', (W, H), (70, 74, 82)), (0, 0), sh)
     # м'яка тінь від самого предмета
     drop = Image.new('L', (W, H), 0)
     drop.paste(cut.getchannel('A').point(lambda v: v * .22), (x + 6, y + 14))
-    out.paste(Image.new('RGB', (W, H), (90, 70, 52)), (0, 0), drop.filter(ImageFilter.GaussianBlur(22)))
+    out.paste(Image.new('RGB', (W, H), (52, 56, 64)), (0, 0), drop.filter(ImageFilter.GaussianBlur(22)))
     out.paste(cut, (x, y), cut)
     return out
 
