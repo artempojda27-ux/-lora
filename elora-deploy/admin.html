@@ -172,6 +172,13 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
 .scrim{position:fixed;inset:0;z-index:50;background:rgba(14,16,20,.3);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   opacity:0;pointer-events:none;transition:opacity .35s}
 .scrim.on{opacity:1;pointer-events:auto}
+.steps{margin:0 0 14px 18px;display:grid;gap:6px;font-size:13px;color:var(--dim)}
+.steps code,.modal p code{font-size:12px;background:var(--up);padding:1px 6px;border-radius:6px}
+.chats{display:grid;gap:6px;margin:4px 0 6px}
+.chats label{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--rule);cursor:pointer;font-size:14px}
+.chats label:has(input:checked){border-color:var(--ink)}
+.chats small{color:var(--faint);margin-left:auto;font-size:12px}
+.chats input{accent-color:var(--ink)}
 .modal{position:fixed;left:50%;top:50%;z-index:51;width:min(520px,calc(100vw - 28px));max-height:90vh;overflow:auto;
   transform:translate(-50%,-46%) scale(.97);opacity:0;pointer-events:none;border-radius:26px;padding:28px;
   background:rgba(255,255,255,.92);transition:opacity .35s,transform .5s var(--spring)}
@@ -200,6 +207,8 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
   <div class="sp"></div>
   <button class="btn ghost" id="undo" disabled title="Скасувати (Ctrl+Z)">
     <svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span class="hide-m">Скасувати</span></button>
+  <button class="btn sec" id="tgBtn" title="Замовлення в Telegram">
+    <svg viewBox="0 0 24 24"><path d="M21 4L3 11l6 2 2 6 3-4 5 4 2-15z"/><path d="M9 13l9-6"/></svg><span class="hide-m">Telegram</span></button>
   <button class="btn sec" id="syncBtn" title="Завантажити свіжі каталоги TAPULI та 4cases">
     <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8"/><path d="M4 3v5h5"/><path d="M4 13a8 8 0 0 0 14.6 4.5L20 16"/><path d="M20 21v-5h-5"/></svg><span class="hide-m">Оновити каталог</span></button>
   <button class="btn ghost" id="settingsBtn" title="Налаштування GitHub">
@@ -307,6 +316,23 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
   <div class="acts">
     <button class="btn ghost" id="mClose">Скасувати</button>
     <button class="btn pri" id="mSave">Зберегти налаштування</button>
+  </div>
+</div>
+<div class="modal" id="tgModal" role="dialog" aria-modal="true" aria-labelledby="tgTitle">
+  <h3 id="tgTitle">Замовлення в Telegram</h3>
+  <p id="tgStatus">Перевіряємо…</p>
+  <ol class="steps">
+    <li>У Telegram відкрийте <a href="https://t.me/BotFather" target="_blank" rel="noopener">@BotFather</a> → <code>/newbot</code> → скопіюйте токен.</li>
+    <li>Vercel → проєкт <b>lora</b> → Settings → Environment Variables: <code>TELEGRAM_BOT_TOKEN</code> = токен → Save → Deployments → Redeploy.</li>
+    <li>Напишіть своєму боту <code>/start</code> (або додайте його в робочу групу й напишіть там).</li>
+    <li>Натисніть «Знайти чати», оберіть свій і збережіть — замовлення почнуть приходити.</li>
+  </ol>
+  <div id="tgChats" class="chats"></div>
+  <div class="acts">
+    <button class="btn ghost" id="tgClose">Закрити</button>
+    <button class="btn sec" id="tgFind">Знайти чати</button>
+    <button class="btn sec" id="tgTest" disabled>Тест</button>
+    <button class="btn pri" id="tgSave" disabled>Зберегти чат</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -566,7 +592,7 @@ function openModal(){
   $('#gPath').value = c.path; $('#gToken').value = c.token;
   $('#modal').classList.add('on'); $('#scrim').classList.add('on');
 }
-function closeModal(){ $('#modal').classList.remove('on'); $('#scrim').classList.remove('on'); }
+function closeModal(){ $('#modal').classList.remove('on'); $('#tgModal').classList.remove('on'); $('#scrim').classList.remove('on'); }
 $('#settingsBtn').onclick = openModal;
 $('#mClose').onclick = closeModal; $('#scrim').onclick = closeModal;
 $('#mSave').onclick = () => {
@@ -614,6 +640,62 @@ async function errText(r){
   return j.message || `Помилка GitHub (${r.status})`;
 }
 $('#save').onclick = save;
+
+/* ================= Telegram: куди надходять замовлення ================= */
+const tgApi = async (q, body) => {
+  const c = cfg();
+  const r = await fetch('/api/tg' + (body ? '' : '?' + new URLSearchParams(q)), {method: body ? 'POST' : 'GET',
+    headers: {Authorization: `Bearer ${c.token}`, 'Content-Type': 'application/json'}, body: body ? JSON.stringify(body) : undefined});
+  const j = await r.json().catch(() => ({}));
+  if(r.status === 401) throw new Error('GitHub токен не підходить — перевірте ⚙');
+  if(r.status === 404) throw new Error('Функція /api/tg ще не задеплоєна');
+  if(!r.ok || !j.ok) throw new Error(j.error === 'no_token' ? 'У Vercel ще немає TELEGRAM_BOT_TOKEN' : (j.error || r.status));
+  return j;
+};
+let tgPicked = null;
+async function openTg(){
+  if(!cfg().token){ openModal(); return toast('Спершу додайте GitHub токен'); }
+  $('#tgModal').classList.add('on'); $('#scrim').classList.add('on');
+  $('#tgChats').innerHTML = ''; tgPicked = null; $('#tgSave').disabled = true; $('#tgTest').disabled = true;
+  $('#tgStatus').textContent = 'Перевіряємо…';
+  try{
+    const s = await tgApi({action:'status'});
+    $('#tgStatus').innerHTML = !s.token
+      ? 'Бот ще не підключений: у Vercel немає <code>TELEGRAM_BOT_TOKEN</code> (крок 2).'
+      : `Бот <b>@${s.bot}</b> підключений. ${s.chat ? `Замовлення йдуть у чат <code>${s.chat}</code>.` : 'Чат для замовлень ще не обрано (кроки 3–4).'}`;
+    $('#tgTest').disabled = !(s.token && s.chat);
+  }catch(e){ $('#tgStatus').textContent = e.message; }
+}
+$('#tgBtn').onclick = openTg;
+$('#tgClose').onclick = () => { $('#tgModal').classList.remove('on'); $('#scrim').classList.remove('on'); };
+$('#tgFind').onclick = async () => {
+  try{
+    const {chats} = await tgApi({action:'chats'});
+    $('#tgChats').innerHTML = chats.length ? chats.map(c => `<label><input type="radio" name="tgc" value="${c.id}">
+      ${c.title}${c.username ? ` <span style="color:var(--faint)">@${c.username}</span>` : ''}<small>${{private:'особистий', group:'група', supergroup:'група', channel:'канал'}[c.type] || c.type}</small></label>`).join('')
+      : '<p>Чатів не знайдено — напишіть боту <code>/start</code> і натисніть ще раз.</p>';
+  }catch(e){ toast(e.message, true); }
+};
+$('#tgChats').onchange = e => { tgPicked = e.target.value; $('#tgSave').disabled = $('#tgTest').disabled = !tgPicked; };
+$('#tgTest').onclick = async () => {
+  try{ await tgApi(null, {action:'test', chat_id: tgPicked || undefined}); toast('Тестове повідомлення надіслано'); }
+  catch(e){ toast(e.message, true); }
+};
+$('#tgSave').onclick = async () => {
+  if(!tgPicked) return;
+  const c = cfg(), path = c.path.replace(/data\/prices\.js$/, 'config/telegram.json');
+  const api = `https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${path.split('/').map(encodeURIComponent).join('/')}`;
+  const H = {Authorization:`Bearer ${c.token}`, Accept:'application/vnd.github+json'};
+  try{
+    const head = await fetch(`${api}?ref=${encodeURIComponent(c.branch)}`, {headers:H, cache:'no-store'});
+    const sha = head.ok ? (await head.json()).sha : undefined;
+    const put = await fetch(api, {method:'PUT', headers:H, body:JSON.stringify({
+      message:'Telegram: чат для замовлень (admin.html)', branch:c.branch,
+      content:b64(JSON.stringify({chat_id: tgPicked}) + '\n'), ...(sha ? {sha} : {})})});
+    if(!put.ok) throw new Error(await errText(put));
+    toast('Збережено. Через 1–2 хв замовлення підуть у цей чат');
+  }catch(e){ toast(e.message, true); }
+};
 
 /* кнопка «Оновити каталог»: запускає GitHub Actions workflow .github/workflows/catalog.yml */
 $('#syncBtn').onclick = async () => {
