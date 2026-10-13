@@ -6,6 +6,7 @@
 
 const { chatId } = require('./_telegram');
 const { check } = require('./_stock');
+const { products, suppliers, supplierOf } = require('./_catalog');
 const MARK = {true: '✅', false: '❌ немає', null: '⚠️ не перевірено'};
 
 const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[c]));
@@ -52,33 +53,73 @@ module.exports = async (req, res) => {
   if (!items.length) return res.status(400).json({ok: false, error: 'items'});
 
   const id = Date.now().toString(36).slice(-5).toUpperCase();
-  /* наявність у постачальників на момент замовлення */
-  const stock = await check(items, req.headers['x-forwarded-host'] || req.headers.host).catch(() => new Map());
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
+  /* наявність у постачальників, каталог (посилання) і контакти постачальників — паралельно */
+  const [stock, cat, sup] = await Promise.all([
+    check(items, host).catch(() => new Map()), products(host).catch(() => null), suppliers(host).catch(() => null)]);
   const st = i => MARK[String(stock.has(`${i.id}|${i.size}`) ? stock.get(`${i.id}|${i.size}`) : null)];
+  const info = i => (cat && cat.get(i.id)) || {s: supplierOf(i.id), u: null};
+  const sizeTxt = i => i.size && i.size !== 'one size' ? `розмір ${i.size}` : '';
   const total = items.reduce((s, i) => s + i.price, 0);
+  const tel = `+${digits.length === 10 ? '38' + digits : digits}`;
+
+  /* 1) замовлення для менеджера: товар — посилання на картку на вітрині, поруч — у постачальника */
   const text = [
     `<b>Нове замовлення №${id}</b>`,
     '',
-    ...items.map((i, n) => `${n + 1}. ${st(i)} ${esc(i.t)}${i.col ? ` · ${esc(i.col)}` : ''}` +
-      `${i.size && i.size !== 'one size' ? ` · розмір <b>${esc(i.size)}</b>` : ''} — ${money(i.price)}` +
-      `\n    <code>${esc(i.id)}</code>`),
+    ...items.map((i, n) => {
+      const x = info(i), sp = sup && sup[x.s];
+      return `${n + 1}. ${st(i)} <a href="https://${host}/#p=${encodeURIComponent(i.id)}">${esc(i.t)}</a>` +
+        `${i.col ? ` · ${esc(i.col)}` : ''}${sizeTxt(i) ? ` · <b>${esc(sizeTxt(i))}</b>` : ''} — ${money(i.price)}` +
+        `\n    ↳ ${x.u ? `<a href="${esc(x.u)}">${esc(sp ? sp.name : x.s || 'постачальник')}</a>` : esc(sp ? sp.name : x.s || '—')}` +
+        ` · арт. <code>${esc(i.id.replace(/^(4c|pd)-/, ''))}</code>`;
+    }),
     '',
     `<b>Разом: ${money(total)}</b>`,
     '',
     `👤 ${esc(c.name)}`,
-    `📞 <a href="tel:+${digits.length === 10 ? '38' + digits : digits}">${esc(c.phone)}</a>`,
+    `📞 <a href="tel:${tel}">${esc(c.phone)}</a>`,
     `📦 ${esc(c.city)}, ${esc(c.dep)}`,
     `💬 ${messenger(via, handle)}`,
     c.note ? `📝 ${esc(c.note)}` : null,
   ].filter(l => l !== null).join('\n');
 
+  /* 2) заявки постачальникам: по одній на кожного — текст копіюється дотиком або пересилається */
+  const groups = new Map();
+  items.forEach(i => { const s = info(i).s || 'other'; groups.set(s, [...(groups.get(s) || []), i]); });
+  const orders = [...groups].map(([s, list]) => {
+    const sp = (sup && sup[s]) || {name: s};
+    const sum = list.reduce((a, i) => a + i.price, 0);
+    const body = [
+      `Дропшипінг, замовлення ${id}`,
+      ...list.map((i, n) => `${n + 1}) арт. ${i.id.replace(/^(4c|pd)-/, '')} — ${i.t}` +
+        `${i.col ? `, ${i.col}` : ''}${sizeTxt(i) ? `, ${sizeTxt(i)}` : ''} — 1 шт.`),
+      `Отримувач: ${c.name}`,
+      `Телефон: ${c.phone}`,
+      `Нова пошта: ${c.city}, ${c.dep}`,
+      `Накладений платіж: ${money(sum)}`,
+    ].join('\n');
+    const buttons = [
+      sp.telegram && {text: `✉️ Написати ${sp.name}`, url: sp.telegram},
+      sp.instagram && {text: 'Instagram', url: sp.instagram},
+      ...list.map(i => info(i).u).filter(Boolean).slice(0, 3).map((u, n) => ({text: `🔗 Товар ${list.length > 1 ? n + 1 : ''}`.trim(), url: u})),
+    ].filter(Boolean);
+    return {
+      text: [`📦 <b>Заявка для ${esc(sp.name)}</b> · №${id}`,
+        [sp.phone && `📞 ${esc(sp.phone)}`, sp.email && `✉️ ${esc(sp.email)}`].filter(Boolean).join(' · ') || null,
+        '', `<pre>${esc(body)}</pre>`].filter(l => l !== null).join('\n'),
+      reply_markup: buttons.length ? {inline_keyboard: [buttons.slice(0, 2), buttons.slice(2)].filter(r => r.length)} : undefined,
+    };
+  });
+
+  const send = m => fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({chat_id: chat, parse_mode: 'HTML', disable_web_page_preview: true, ...m}),
+  });
   try {
-    const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({chat_id: chat, text, parse_mode: 'HTML', disable_web_page_preview: true}),
-    });
+    const r = await send({text});
     if (!r.ok) throw new Error(`telegram ${r.status}`);
+    for (const m of orders) await send(m).catch(e => console.error('supplier msg', e));
     return res.status(200).json({ok: true, id});
   } catch (e) {
     console.error('order', e);

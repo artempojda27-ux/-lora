@@ -96,6 +96,11 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
 .chap:disabled{opacity:.5;cursor:default;transform:none}
 @media(max-width:860px){.chapters{grid-template-columns:1fr 1fr}.chap b{font-size:24px}}
 
+.supc{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:13px;color:var(--dim);margin:-6px 0 14px}
+.supc:empty{display:none}
+.supc a{color:var(--ink);text-decoration:none;font-weight:500}
+.supc a:hover{text-decoration:underline}
+.supc span{color:var(--faint)}
 /* масові дії */
 .bulk{border-radius:22px;padding:20px 22px;margin-bottom:16px}
 .bulk h2{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);font-weight:500;margin-bottom:14px}
@@ -233,6 +238,7 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
 
   <section class="bulk glass">
     <h2 id="bulkTitle">Масова зміна</h2>
+    <div class="supc" id="supContacts"></div>
     <div class="brow">
       <div class="field"><label for="act">Дія</label>
         <select class="sel" id="act">
@@ -353,6 +359,9 @@ document.addEventListener('error', e => {      // оптимізатор -> пр
   if(!im.classList.contains('broken')){ im.classList.add('broken'); im.dataset.o = ''; im.src = 'assets/mono.png'; }
 }, true);
 const money = n => n == null || isNaN(n) ? '—' : Math.round(n).toLocaleString('uk-UA') + ' ₴';
+/* контакти постачальників — config/suppliers.json (їх же бачить бот у заявках) */
+let CONTACTS = null;
+fetch('config/suppliers.json', {cache:'no-store'}).then(r => r.ok ? r.json() : null).then(j => { CONTACTS = j; drawChapters(); }).catch(() => {});
 /* розділи-постачальники: кожен зі своїм каталогом і своїми масовими правками цін */
 const SUPPLIERS = [
   {id:'tapuli', name:'TAPULI', note:'Взуття', site:'tapuli.shop'},
@@ -559,6 +568,12 @@ function drawChapters(){
     SUPPLIERS.map(sp => card(sp.id, sp.name, sp.note, ITEMS.filter(x => x.s === sp.id))).join('');
   const sp = SUPPLIERS.find(x => x.id === F.sup);
   $('#bulkTitle').textContent = sp ? `Масова зміна · ${sp.name}` : 'Масова зміна · усі постачальники';
+  const k = sp && CONTACTS && CONTACTS[sp.id];
+  $('#supContacts').innerHTML = k ? [k.phone && `📞 <a href="tel:${k.phone.replace(/[^+\d]/g, '')}">${k.phone}</a>`,
+    k.telegram && `<a href="${k.telegram}" target="_blank" rel="noopener">Telegram ↗</a>`,
+    k.instagram && `<a href="${k.instagram}" target="_blank" rel="noopener">Instagram ↗</a>`,
+    k.email && `<a href="mailto:${k.email}">${k.email}</a>`,
+    k.site && `<a href="${k.site}" target="_blank" rel="noopener">Сайт ↗</a>`].filter(Boolean).join('<span>·</span>') : '';
 }
 $('#chapters').onclick = e => { const b = e.target.closest('[data-sup]'); if(!b || b.disabled) return;
   F.sup = b.dataset.sup; F.cat = ''; F.shown = PAGE; fillCats(); draw(); };

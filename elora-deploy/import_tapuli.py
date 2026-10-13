@@ -81,7 +81,7 @@ def main():
             if not sizes or not v['price_retail'] or not photos[0]:
                 continue
             data.append({
-                'id': v['group_id'], 't': v['title'].strip(), 'c': p['category'], 'cs': p['category_slug'],
+                'id': v['group_id'], 'u': v['url'], 't': v['title'].strip(), 'c': p['category'], 'cs': p['category_slug'],
                 'b': p['vendor'] or 'Tapuli', 'p': v['price_retail'],
                 'o': v['price_old'] if v['on_sale'] else None,
                 'col': v['color'], 'mat': v['material'], 'sz': sizes, 'img': photos[:8],
