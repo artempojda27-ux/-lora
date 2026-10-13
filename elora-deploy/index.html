@@ -6,7 +6,7 @@
 <title>ÉLORA — жіноче взуття з натуральної шкіри | Доставка по Україні</title>
 <meta name="description" content="ÉLORA: жіноче взуття, шкіряні сумки, гаманці, портмоне та ремені з натуральної шкіри. Усе в наявності, відправка Новою поштою за 1–3 дні.">
 <link rel="canonical" href="https://elora.ua/">
-<meta name="theme-color" content="#F7F3EC">
+<meta name="theme-color" content="#E7E8E9">
 <link rel="icon" href="assets/icon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/icon-180.png">
 <meta property="og:type" content="website">
@@ -25,14 +25,14 @@
 <style>
 /* ÉLORA — палитра «Hermès × Apple»: тёплая бумага, чернила, фирменный оранжевый */
 :root{
-  --bg:#F7F3EC; --surf:#FFFFFF; --up:#EFE9DF; --up2:#E7DFD2; --sand:#F2ECE2;
-  --orange:#E2601A; --orange-d:#C24E10; --orange-l:#F6E3D6; --brown:#3B2A1E;
-  --ink:#1D1D1F; --dim:#6E6E73; --faint:#9C958B;
-  --rule:rgba(59,42,30,.16); --rule2:rgba(29,29,31,.08);
+  --bg:#E7E8E9; --surf:#F6F6F7; --up:#E0E1E3; --up2:#D6D8DB; --sand:#EDEEEF;
+  --orange:#24272B; --orange-d:#000000; --orange-l:#DCDEE1; --brown:#2A2D31;
+  --ink:#1B1D20; --dim:#62666C; --faint:#8E9298;
+  --rule:rgba(27,29,32,.15); --rule2:rgba(29,29,31,.08);
   --serif:'Cormorant Garamond','Times New Roman',serif;
   --sans:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;
   --ease:cubic-bezier(.3,.85,.25,1); --spring:cubic-bezier(.32,.72,0,1);
-  --r:18px; --shadow:0 1px 2px rgba(59,42,30,.04),0 8px 30px rgba(59,42,30,.06);
+  --r:18px; --shadow:0 1px 2px rgba(20,24,30,.04),0 8px 30px rgba(20,24,30,.06);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -54,11 +54,11 @@ input,select{font:inherit}
 .ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
 .ambient i{position:absolute;border-radius:50%;filter:blur(70px);will-change:transform}
 .ambient i:nth-child(1){width:62vmax;height:62vmax;left:-18vmax;top:-22vmax;
-  background:radial-gradient(circle,rgba(246,205,176,.85),rgba(246,205,176,0) 62%);animation:silk1 34s ease-in-out infinite alternate}
+  background:radial-gradient(circle,rgba(205,212,222,.8),rgba(205,212,222,0) 62%);animation:silk1 34s ease-in-out infinite alternate}
 .ambient i:nth-child(2){width:56vmax;height:56vmax;right:-20vmax;top:18vh;
-  background:radial-gradient(circle,rgba(226,206,178,.9),rgba(226,206,178,0) 62%);animation:silk2 41s ease-in-out infinite alternate}
+  background:radial-gradient(circle,rgba(214,216,220,.9),rgba(214,216,220,0) 62%);animation:silk2 41s ease-in-out infinite alternate}
 .ambient i:nth-child(3){width:48vmax;height:48vmax;left:22vw;bottom:-26vmax;
-  background:radial-gradient(circle,rgba(238,170,128,.42),rgba(238,170,128,0) 62%);animation:silk3 47s ease-in-out infinite alternate}
+  background:radial-gradient(circle,rgba(176,188,204,.4),rgba(176,188,204,0) 62%);animation:silk3 47s ease-in-out infinite alternate}
 @keyframes silk1{to{transform:translate(16vw,12vh) scale(1.15)}}
 @keyframes silk2{to{transform:translate(-18vw,-10vh) scale(.9)}}
 @keyframes silk3{to{transform:translate(12vw,-16vh) scale(1.2)}}
@@ -69,14 +69,14 @@ input,select{font:inherit}
 
 /* ================= header: стекло apple.com ================= */
 header{position:fixed;inset:0 0 auto;z-index:60;
-  background:rgba(247,243,236,.72);backdrop-filter:saturate(1.8) blur(20px);
+  background:rgba(231,232,233,.72);backdrop-filter:saturate(1.8) blur(20px);
   -webkit-backdrop-filter:saturate(1.8) blur(20px);
   border-bottom:1px solid transparent;transition:background .4s,border-color .4s}
-header.solid{background:rgba(247,243,236,.86);border-bottom-color:var(--rule2)}
+header.solid{background:rgba(231,232,233,.86);border-bottom-color:var(--rule2)}
 header.menu{z-index:95;background:transparent!important;
   backdrop-filter:none!important;border-bottom-color:transparent!important}
-.hin{position:relative;display:flex;align-items:center;height:52px;gap:18px}
-.mark{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:.26em;padding-left:.26em;
+.hin{position:relative;display:flex;align-items:center;height:64px;gap:18px}
+.mark{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:.26em;padding-left:.26em;
   color:var(--brown);flex:none}
 .hlinks{flex:1;display:flex;justify-content:center;gap:30px;font-size:12px;letter-spacing:.01em}
 .hlinks a{color:rgba(29,29,31,.8);text-decoration:none;transition:color .25s;white-space:nowrap}
@@ -99,12 +99,13 @@ header.menu{z-index:95;background:transparent!important;
 .burger i:nth-child(2){width:14px}
 .burger.on i:nth-child(1){transform:translateY(3.2px) rotate(45deg)}
 .burger.on i:nth-child(2){width:20px;transform:translateY(-3.2px) rotate(-45deg)}
+@media(max-width:640px){.mark{font-size:25px}}
 @media(max-width:1000px){.hlinks{display:none}.burger{display:flex}
   .hin .mark{position:absolute;left:50%;transform:translateX(-50%)}}
 
 /* ================= drawer (mobile) ================= */
 .drawer{position:fixed;inset:0;z-index:90;display:none;
-  background:rgba(29,22,16,.32);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  background:rgba(14,16,20,.32);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   opacity:0;pointer-events:none;transition:opacity .4s}
 .drawer.on{opacity:1;pointer-events:auto}
 @media(max-width:1000px){.drawer{display:block}}
@@ -112,7 +113,7 @@ header.menu{z-index:95;background:transparent!important;
   background:var(--bg);border-radius:22px 22px 0 0;
   padding:10px 16px 26px;transform:translateY(100%);
   transition:transform .62s var(--spring);-webkit-overflow-scrolling:touch;
-  box-shadow:0 -10px 50px rgba(59,42,30,.18)}
+  box-shadow:0 -10px 50px rgba(20,24,30,.18)}
 .drawer.on .dsheet{transform:none}
 .dgrab{display:block;width:40px;height:5px;border-radius:3px;
   background:rgba(29,29,31,.16);margin:0 auto 6px}
@@ -121,8 +122,8 @@ header.menu{z-index:95;background:transparent!important;
   display:grid;place-items:center;transition:background .25s}
 .dclose:active{background:rgba(29,29,31,.12)}
 .dhead{text-align:center;padding:14px 46px 18px}
-.dhead img{width:34px;margin:0 auto 12px}
-.dhead .w{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:.24em;padding-left:.24em;
+.dhead img{width:48px;margin:0 auto 14px}
+.dhead .w{font-family:var(--serif);font-weight:500;font-size:38px;letter-spacing:.24em;padding-left:.24em;
   color:var(--brown);margin-bottom:4px}
 .dhead .t{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
 .dpills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
@@ -140,8 +141,8 @@ header.menu{z-index:95;background:transparent!important;
 .drow .nm{flex:1;min-width:0;font-family:var(--serif);font-weight:500;font-size:21px;color:var(--ink);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .drow em{font-style:normal;font-size:12px;color:var(--faint);flex:none}
-.drow .chev{flex:none;width:7px;height:7px;border-right:1.5px solid #C7C2BA;
-  border-bottom:1.5px solid #C7C2BA;transform:rotate(-45deg);margin-left:2px}
+.drow .chev{flex:none;width:7px;height:7px;border-right:1.5px solid #B9BCC1;
+  border-bottom:1.5px solid #B9BCC1;transform:rotate(-45deg);margin-left:2px}
 .dcta{display:block;width:100%;padding:16px;border-radius:999px;
   background:var(--orange);color:#fff;font-weight:500;
   font-size:15px;text-align:center;text-decoration:none;margin-bottom:16px}
@@ -158,7 +159,7 @@ header.menu{z-index:95;background:transparent!important;
 .hero-in{align-self:center;padding:90px 6vw 60px 9vw;max-width:720px;position:relative;z-index:2;
   will-change:opacity,transform;animation:rise 1.4s var(--ease) both}
 @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
-.hero-bg{position:relative;overflow:hidden;margin:72px 24px 24px 0;border-radius:28px}
+.hero-bg{position:relative;overflow:hidden;margin:84px 24px 24px 0;border-radius:28px}
 .hero-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 60%;
   animation:drift 26s ease-in-out infinite alternate}
 @keyframes drift{from{transform:scale(1.02)}to{transform:scale(1.09) translateY(-1%)}}
@@ -166,7 +167,7 @@ header.menu{z-index:95;background:transparent!important;
   color:var(--faint);white-space:nowrap;z-index:2;pointer-events:none}
 .vside.l{left:9vw}
 .vside.r{display:none}
-.crest img{width:34px;margin:0 0 22px}
+.crest img{width:58px;margin:0 0 26px}
 .wordmark{font-family:var(--serif);font-weight:500;font-size:clamp(46px,7vw,96px);line-height:.95;
   letter-spacing:.14em;color:var(--brown);margin-bottom:14px}
 .tagline{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--orange);font-weight:500;
@@ -187,7 +188,7 @@ header.menu{z-index:95;background:transparent!important;
 .scroll{display:none}
 @media(max-width:900px){
   .hero{grid-template-columns:1fr;height:auto;min-height:0;max-height:none}
-  .hero-bg{order:-1;margin:62px 16px 0;border-radius:22px;aspect-ratio:4/5;max-height:72svh}
+  .hero-bg{order:-1;margin:74px 16px 0;border-radius:22px;aspect-ratio:4/5;max-height:72svh}
   .hero-in{padding:34px 22px 56px;text-align:center;margin:0 auto}
   .crest{display:none}
   .hero-in p{margin:0 auto 28px}
@@ -199,8 +200,8 @@ header.menu{z-index:95;background:transparent!important;
 .navitem{position:relative;background:none;color:rgba(29,29,31,.8);font-size:12px;
   transition:color .25s;white-space:nowrap;padding:0}
 .navitem:hover,.navitem.on{color:var(--orange)}
-.mega{position:fixed;left:0;right:0;top:52px;z-index:58;overflow:hidden;
-  background:rgba(247,243,236,.94);backdrop-filter:saturate(1.8) blur(24px);
+.mega{position:fixed;left:0;right:0;top:64px;z-index:58;overflow:hidden;
+  background:rgba(231,232,233,.94);backdrop-filter:saturate(1.8) blur(24px);
   -webkit-backdrop-filter:saturate(1.8) blur(24px);
   border-bottom:1px solid var(--rule2);
   max-height:0;transition:max-height .58s var(--spring)}
@@ -256,7 +257,7 @@ header.menu{z-index:95;background:transparent!important;
   transition:transform 1.4s var(--ease)}
 .dept:hover img{transform:scale(1.04)}
 .dept::after{content:'';position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(to top,rgba(29,22,16,.78),rgba(29,22,16,.35) 45%,rgba(29,22,16,0) 75%)}
+  background:linear-gradient(to top,rgba(14,16,20,.78),rgba(14,16,20,.35) 45%,rgba(14,16,20,0) 75%)}
 .dept div{padding:26px 28px;color:#fff}
 .dept small{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.8;margin-bottom:6px}
 .dept b{display:block;font-family:var(--serif);font-weight:500;font-size:34px;line-height:1.05;margin-bottom:8px}
@@ -283,7 +284,7 @@ header.menu{z-index:95;background:transparent!important;
 .chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
 .chip.on em{color:rgba(255,255,255,.6)}
 
-.tools{position:sticky;top:52px;z-index:40;background:rgba(247,243,236,.86);
+.tools{position:sticky;top:64px;z-index:40;background:rgba(231,232,233,.86);
   backdrop-filter:saturate(1.8) blur(18px);-webkit-backdrop-filter:saturate(1.8) blur(18px);
   display:flex;gap:9px;align-items:center;
   padding:11px 0;border-bottom:1px solid var(--rule2);margin-bottom:6px}
@@ -324,13 +325,13 @@ header.menu{z-index:95;background:transparent!important;
 .clearf{font-size:13px;color:var(--orange);font-weight:500;display:none}
 .clearf.show{display:block}
 
-.fsheet{position:fixed;inset:0;z-index:86;display:none;background:rgba(29,22,16,.32);
+.fsheet{position:fixed;inset:0;z-index:86;display:none;background:rgba(14,16,20,.32);
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .4s}
 .fsheet.on{opacity:1;pointer-events:auto}
 .fin{position:absolute;left:0;right:0;bottom:0;max-height:88svh;overflow-y:auto;
   background:var(--bg);border-radius:22px 22px 0 0;padding:10px 18px 24px;
   transform:translateY(100%);transition:transform .6s var(--spring);
-  box-shadow:0 -10px 50px rgba(59,42,30,.18)}
+  box-shadow:0 -10px 50px rgba(20,24,30,.18)}
 .fsheet.on .fin{transform:none}
 .fin h4{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);font-weight:500;
   margin:20px 0 11px}
@@ -391,7 +392,7 @@ header.menu{z-index:95;background:transparent!important;
 .sizes{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap}
 .sizes b{font-weight:400;font-size:11px;color:var(--dim);
   border:1px solid var(--rule2);border-radius:6px;width:27px;height:24px;display:grid;place-items:center}
-.sizes b.off{color:#CFC9C0;text-decoration:line-through;border-color:transparent}
+.sizes b.off{color:#B9BCC1;text-decoration:line-through;border-color:transparent}
 .scarce{font-size:12px;color:var(--orange);font-weight:500;margin-top:8px}
 .more{display:block;margin:16px auto 100px;padding:14px 34px;border-radius:999px;border:1px solid var(--ink);
   color:var(--ink);font-size:14px;font-weight:500;transition:background .3s,color .3s}
@@ -401,7 +402,7 @@ header.menu{z-index:95;background:transparent!important;
 .empty b{display:block;font-family:var(--serif);font-weight:500;font-size:30px;color:var(--ink);margin-bottom:9px}
 
 /* ================= overlays ================= */
-.scrim{position:fixed;inset:0;z-index:80;background:rgba(29,22,16,.32);
+.scrim{position:fixed;inset:0;z-index:80;background:rgba(14,16,20,.32);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   opacity:0;pointer-events:none;transition:opacity .4s}
 .scrim.on{opacity:1;pointer-events:auto}
@@ -410,7 +411,7 @@ header.menu{z-index:95;background:transparent!important;
   left:50%;top:50%;transform:translate(-50%,-50%) scale(.97);
   width:min(1040px,calc(100vw - 40px));max-height:90svh;overflow-y:auto;
   display:grid;grid-template-columns:1.05fr 1fr;opacity:0;pointer-events:none;
-  box-shadow:0 30px 80px rgba(59,42,30,.25);
+  box-shadow:0 30px 80px rgba(20,24,30,.25);
   transition:opacity .4s,transform .55s var(--spring)}
 .psheet.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
 .gal{background:var(--sand);position:relative}
@@ -481,7 +482,7 @@ header.menu{z-index:95;background:transparent!important;
 
 /* cart */
 .cart{position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);z-index:88;background:var(--surf);
-  box-shadow:-20px 0 60px rgba(59,42,30,.16);transform:translateX(105%);transition:transform .55s var(--spring);
+  box-shadow:-20px 0 60px rgba(20,24,30,.16);transform:translateX(105%);transition:transform .55s var(--spring);
   display:flex;flex-direction:column}
 .cart.on{transform:none}
 .chead{display:flex;justify-content:space-between;align-items:center;padding:22px 24px;
@@ -533,7 +534,8 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
   .card{opacity:1;transform:none}}
 
 /* ================= premium pass (design review 2026-10-13) ================= */
-:root{--photo:#F1EBE1}
+.hero-bg img,.dept.shoes img{filter:saturate(.82) brightness(.97)}
+:root{--photo:#E4E6E9}
 .trust{padding:56px 0 8px}
 .tgrid{gap:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
 .titem{background:none;box-shadow:none;border-radius:0;padding:26px 26px 24px;border-left:1px solid var(--rule)}
@@ -558,13 +560,13 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
 .card h3{font-size:13.5px;font-weight:400;line-height:1.5;letter-spacing:.005em;margin-bottom:6px}
 .sub{font-size:12px;color:var(--faint);margin-bottom:10px}
 .price{font-size:14px;font-weight:400;letter-spacing:.02em;font-variant-numeric:tabular-nums}
-.price s{color:#B7AFA4}
+.price s{color:#9EA2A8}
 .card .price ins{text-decoration:none;color:var(--orange)}
 .info .price{font-size:20px;font-weight:400}
 .gal{background:var(--photo)}
 .dept.leather img{object-position:50% 40%}
-.dept.leather::after{background:linear-gradient(to top,rgba(29,22,16,.6),rgba(29,22,16,0) 60%)}
-.shot,.gal{background:linear-gradient(#F7F3EC,#ECE4D8)}
+.dept.leather::after{background:linear-gradient(to top,rgba(14,16,20,.6),rgba(14,16,20,0) 60%)}
+.shot,.gal{background:linear-gradient(#EEEFF1,#DDDFE3)}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Store","name":"ÉLORA",
@@ -718,7 +720,7 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
 <footer><div class="wrapx">
   <div class="fgrid">
     <div>
-      <div class="mark" style="font-size:18px">ÉLORA</div>
+      <div class="mark" style="font-size:30px">ÉLORA</div>
       <p>Maison of leather. Взуття, сумки та аксесуари з натуральної шкіри й замші.</p>
     </div>
     <div class="fcol">
