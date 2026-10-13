@@ -5,6 +5,8 @@
    Без токена чи чату функція відповідає 503, і вітрина просить покупця зателефонувати. */
 
 const { chatId } = require('./_telegram');
+const { check } = require('./_stock');
+const MARK = {true: '✅', false: '❌ немає', null: '⚠️ не перевірено'};
 
 const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[c]));
 const str = (v, max) => typeof v === 'string' ? v.trim().slice(0, max) : '';
@@ -50,11 +52,14 @@ module.exports = async (req, res) => {
   if (!items.length) return res.status(400).json({ok: false, error: 'items'});
 
   const id = Date.now().toString(36).slice(-5).toUpperCase();
+  /* наявність у постачальників на момент замовлення */
+  const stock = await check(items, req.headers['x-forwarded-host'] || req.headers.host).catch(() => new Map());
+  const st = i => MARK[String(stock.has(`${i.id}|${i.size}`) ? stock.get(`${i.id}|${i.size}`) : null)];
   const total = items.reduce((s, i) => s + i.price, 0);
   const text = [
     `<b>Нове замовлення №${id}</b>`,
     '',
-    ...items.map((i, n) => `${n + 1}. ${esc(i.t)}${i.col ? ` · ${esc(i.col)}` : ''}` +
+    ...items.map((i, n) => `${n + 1}. ${st(i)} ${esc(i.t)}${i.col ? ` · ${esc(i.col)}` : ''}` +
       `${i.size && i.size !== 'one size' ? ` · розмір <b>${esc(i.size)}</b>` : ''} — ${money(i.price)}` +
       `\n    <code>${esc(i.id)}</code>`),
     '',

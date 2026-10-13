@@ -508,6 +508,8 @@ header.menu{z-index:95;background:transparent!important;
 .form input::placeholder{color:var(--faint)}
 .form input:focus{outline:none;border-color:var(--orange)}
 @media(max-width:820px){.cart{overflow-y:auto}.citems{flex:none;overflow:visible}}
+.ci.gone img,.ci.gone b,.ci.gone .p{opacity:.45}
+.nost{font-size:12px;font-weight:600;color:#B3261E;margin-top:4px}
 .via-l{font-size:12px;color:var(--dim);margin:6px 2px 0}
 .via{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .via button{height:40px;border-radius:12px;border:1px solid var(--rule);background:var(--surf);font-size:13.5px;font-weight:500;
@@ -1156,14 +1158,17 @@ function renderCart(done){
     items.innerHTML = `<div class="cempty">Кошик порожній</div>`;
     foot.innerHTML = ''; return;
   }
-  items.innerHTML = state.cart.map(i=>`<div class="ci">
+  items.innerHTML = state.cart.map(i=>`<div class="ci ${i.gone ? 'gone' : ''}">
     ${pic(i.img, 128, 'alt=""')}
     <div><b>${i.t}</b><div class="m">${[i.col, i.size === ONE ? '' : 'розмір ' + i.size].filter(Boolean).join(' · ')}</div>
-      <div class="p">${money(i.price)}</div></div>
+      <div class="p">${money(i.price)}</div>${i.gone ? '<div class="nost">Немає в наявності</div>' : ''}</div>
     <button class="rm" data-rm="${i.key}" aria-label="Прибрати">×</button>
   </div>`).join('');
 
   const sum = state.cart.reduce((s,i)=>s+i.price, 0);
+  /* введені контакти не губляться, коли кошик перемальовується */
+  const kept = [...foot.querySelectorAll('input')].map(el => [el.id, el.value]);
+  const keptVia = $('#fVia') && $('#fVia').dataset.via;
   foot.innerHTML = `
     <div class="total"><span>Разом</span><b>${money(sum)}</b></div>
     <div class="form">
@@ -1182,6 +1187,8 @@ function renderCart(done){
       <input id="fCompany" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
     </div>
     <button class="add" id="checkout">Оформити замовлення</button>`;
+  kept.forEach(([id, v]) => { const el = $('#' + id); if(el) el.value = v; });
+  if(keptVia) selectVia(keptVia, false);
 }
 
 $('#cart').addEventListener('click', e=>{
@@ -1192,16 +1199,18 @@ $('#cart').addEventListener('click', e=>{
   }
   if(e.target.id === 'checkout'){ checkout(e.target); return; }
   const via = e.target.closest('[data-via]');
-  if(via){
-    $('#via').querySelectorAll('button').forEach(b => { const on = b === via; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
-    const f = $('#fVia'); f.disabled = false; f.dataset.via = via.dataset.via;
-    f.placeholder = {telegram:'@нік у Telegram або номер', whatsapp:'Номер WhatsApp', instagram:'@нік в Instagram'}[via.dataset.via];
-    f.inputMode = via.dataset.via === 'whatsapp' ? 'tel' : 'text';
-    if(via.dataset.via === 'whatsapp' && !f.value) f.value = $('#fPhone').value;
-    f.focus(); return;
-  }
+  if(via){ selectVia(via.dataset.via, true); return; }
   if(e.target.id === 'cartClose') closeAll();
 });
+
+function selectVia(name, focus){
+  $('#via').querySelectorAll('button').forEach(b => { const on = b.dataset.via === name; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+  const f = $('#fVia'); f.disabled = false; f.dataset.via = name;
+  f.placeholder = {telegram:'@нік у Telegram або номер', whatsapp:'Номер WhatsApp', instagram:'@нік в Instagram'}[name];
+  f.inputMode = name === 'whatsapp' ? 'tel' : 'text';
+  if(name === 'whatsapp' && !f.value) f.value = $('#fPhone').value;
+  if(focus) f.focus();
+}
 
 async function checkout(btn){
   const v = id => $('#' + id).value.trim();
@@ -1212,6 +1221,21 @@ async function checkout(btn){
   const via = $('#fVia').dataset.via;
   if(!via){ toast('Оберіть Telegram, WhatsApp або Instagram'); $('#via button').focus(); return; }
   if(v('fVia').replace(/[@\s]/g, '').length < 3){ toast('Вкажіть ваш нік або номер'); $('#fVia').focus(); return; }
+  /* наявність у постачальника — до відправки, щоб не продати розпродане */
+  btn.disabled = true; btn.textContent = 'Перевіряємо наявність…';
+  try{
+    const sr = await fetch('/api/stock', {method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({items:state.cart.map(({id, size}) => ({id, size}))})});
+    const sj = sr.ok ? await sr.json() : null;
+    if(sj && sj.stock){
+      state.cart.forEach(i => { i.gone = sj.stock[`${i.id}|${i.size}`] === false; });
+      if(state.cart.some(i => i.gone)){
+        renderCart();
+        toast('Деяких товарів уже немає в наявності — приберіть їх із кошика', 5200);
+        return;
+      }
+    }
+  }catch(e){ /* перевірка недоступна — не блокуємо замовлення, менеджер перевірить сам */ }
   btn.disabled = true; btn.textContent = 'Надсилаємо…';
   try{
     const r = await fetch('/api/order', {method:'POST', headers:{'Content-Type':'application/json'},
