@@ -36,8 +36,14 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Модель для єдиного фону фото
+        uses: actions/cache@v4
+        with:
+          path: ~/.rembg
+          key: rembg-isnet-general-use
+
       - name: Залежності
-        run: pip install --quiet Pillow
+        run: pip install --quiet Pillow "rembg[cpu]"
 
       - name: Взуття (TAPULI)
         id: tapuli
@@ -67,6 +73,21 @@ jobs:
           git checkout -- data/4cases.js img/4c
           git clean -fdq img/4c
 
+      - name: Сумки та аксесуари (Podium)
+        id: podium
+        continue-on-error: true
+        env:
+          PODIUM_FEED: ${{ secrets.PODIUM_FEED_URL }}
+        run: |
+          if [ -n "$PODIUM_FEED" ]; then python3 import_podium.py --feed "$PODIUM_FEED"; else python3 import_podium.py; fi
+          python3 check_catalog.py data/podium.js DATA_PD --min-count 20
+
+      - name: Відкат Podium при помилці
+        if: steps.podium.outcome == 'failure'
+        run: |
+          git checkout -- data/podium.js img/pd
+          git clean -fdq img/pd
+
       - name: Коміт змін
         run: |
           git add -A data img
@@ -87,7 +108,8 @@ jobs:
             echo "### Оновлення каталогу"
             echo "- Взуття (TAPULI): ${{ steps.tapuli.outcome }}"
             echo "- Сумки (4cases): ${{ steps.fourcases.outcome }}"
+            echo "- Сумки (Podium): ${{ steps.podium.outcome }}"
           } >> "$GITHUB_STEP_SUMMARY"
-          if [ "${{ steps.tapuli.outcome }}" = failure ] || [ "${{ steps.fourcases.outcome }}" = failure ]; then
+          if [ "${{ steps.tapuli.outcome }}" = failure ] || [ "${{ steps.fourcases.outcome }}" = failure ] || [ "${{ steps.podium.outcome }}" = failure ]; then
             echo "::warning::Одне з джерел не оновилось — на сайті лишилась попередня версія цього розділу"
           fi

@@ -35,6 +35,8 @@ def fetch(url, tries=6):
 
 def localize(url):
     from PIL import Image, ImageOps
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from tools.unify import unify_file
     path = f"{IMG_DIR}/{url.rsplit('/', 1)[-1].rsplit('.', 1)[0]}.webp"
     if os.path.exists(path):
         return path
@@ -44,7 +46,8 @@ def localize(url):
     try:
         im = ImageOps.exif_transpose(Image.open(io.BytesIO(raw))).convert('RGB')
         im.thumbnail((720, 960))
-        im.save(path, 'WEBP', quality=80, method=6)
+        im.save(path, 'WEBP', quality=86, method=6)
+        unify_file(path)            # єдиний фон ÉLORA (tools/unify.py)
         return path
     except Exception as e:
         print(f'  ! {url}: {e}', file=sys.stderr)
@@ -55,7 +58,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--feed', help='локальний XML замість завантаження')
     ap.add_argument('--out', default='data/catalog.js')
-    ap.add_argument('--workers', type=int, default=4)
+    ap.add_argument('--workers', type=int, default=2)
     a = ap.parse_args()
 
     tmp = tempfile.mkdtemp()
