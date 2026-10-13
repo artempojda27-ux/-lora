@@ -75,8 +75,8 @@ header{position:fixed;inset:0 0 auto;z-index:60;
 header.solid{background:rgba(231,232,233,.86);border-bottom-color:var(--rule2)}
 header.menu{z-index:95;background:transparent!important;
   backdrop-filter:none!important;border-bottom-color:transparent!important}
-.hin{position:relative;display:flex;align-items:center;height:52px;gap:18px}
-.mark{font-family:var(--serif);font-weight:500;font-size:21px;letter-spacing:.26em;padding-left:.26em;
+.hin{position:relative;display:flex;align-items:center;height:64px;gap:18px}
+.mark{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:.26em;padding-left:.26em;
   color:var(--brown);flex:none}
 .hlinks{flex:1;display:flex;justify-content:center;gap:30px;font-size:12px;letter-spacing:.01em}
 .hlinks a{color:rgba(29,29,31,.8);text-decoration:none;transition:color .25s;white-space:nowrap}
@@ -99,6 +99,7 @@ header.menu{z-index:95;background:transparent!important;
 .burger i:nth-child(2){width:14px}
 .burger.on i:nth-child(1){transform:translateY(3.2px) rotate(45deg)}
 .burger.on i:nth-child(2){width:20px;transform:translateY(-3.2px) rotate(-45deg)}
+@media(max-width:640px){.mark{font-size:25px}}
 @media(max-width:1000px){.hlinks{display:none}.burger{display:flex}
   .hin .mark{position:absolute;left:50%;transform:translateX(-50%)}}
 
@@ -121,8 +122,8 @@ header.menu{z-index:95;background:transparent!important;
   display:grid;place-items:center;transition:background .25s}
 .dclose:active{background:rgba(29,29,31,.12)}
 .dhead{text-align:center;padding:14px 46px 18px}
-.dhead img{width:34px;margin:0 auto 12px}
-.dhead .w{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:.24em;padding-left:.24em;
+.dhead img{width:48px;margin:0 auto 14px}
+.dhead .w{font-family:var(--serif);font-weight:500;font-size:38px;letter-spacing:.24em;padding-left:.24em;
   color:var(--brown);margin-bottom:4px}
 .dhead .t{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
 .dpills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
@@ -158,7 +159,7 @@ header.menu{z-index:95;background:transparent!important;
 .hero-in{align-self:center;padding:90px 6vw 60px 9vw;max-width:720px;position:relative;z-index:2;
   will-change:opacity,transform;animation:rise 1.4s var(--ease) both}
 @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
-.hero-bg{position:relative;overflow:hidden;margin:72px 24px 24px 0;border-radius:28px}
+.hero-bg{position:relative;overflow:hidden;margin:84px 24px 24px 0;border-radius:28px}
 .hero-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 60%;
   animation:drift 26s ease-in-out infinite alternate}
 @keyframes drift{from{transform:scale(1.02)}to{transform:scale(1.09) translateY(-1%)}}
@@ -166,7 +167,7 @@ header.menu{z-index:95;background:transparent!important;
   color:var(--faint);white-space:nowrap;z-index:2;pointer-events:none}
 .vside.l{left:9vw}
 .vside.r{display:none}
-.crest img{width:34px;margin:0 0 22px}
+.crest img{width:58px;margin:0 0 26px}
 .wordmark{font-family:var(--serif);font-weight:500;font-size:clamp(46px,7vw,96px);line-height:.95;
   letter-spacing:.14em;color:var(--brown);margin-bottom:14px}
 .tagline{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--orange);font-weight:500;
@@ -187,7 +188,7 @@ header.menu{z-index:95;background:transparent!important;
 .scroll{display:none}
 @media(max-width:900px){
   .hero{grid-template-columns:1fr;height:auto;min-height:0;max-height:none}
-  .hero-bg{order:-1;margin:62px 16px 0;border-radius:22px;aspect-ratio:4/5;max-height:72svh}
+  .hero-bg{order:-1;margin:74px 16px 0;border-radius:22px;aspect-ratio:4/5;max-height:72svh}
   .hero-in{padding:34px 22px 56px;text-align:center;margin:0 auto}
   .crest{display:none}
   .hero-in p{margin:0 auto 28px}
@@ -199,7 +200,7 @@ header.menu{z-index:95;background:transparent!important;
 .navitem{position:relative;background:none;color:rgba(29,29,31,.8);font-size:12px;
   transition:color .25s;white-space:nowrap;padding:0}
 .navitem:hover,.navitem.on{color:var(--orange)}
-.mega{position:fixed;left:0;right:0;top:52px;z-index:58;overflow:hidden;
+.mega{position:fixed;left:0;right:0;top:64px;z-index:58;overflow:hidden;
   background:rgba(231,232,233,.94);backdrop-filter:saturate(1.8) blur(24px);
   -webkit-backdrop-filter:saturate(1.8) blur(24px);
   border-bottom:1px solid var(--rule2);
@@ -283,7 +284,7 @@ header.menu{z-index:95;background:transparent!important;
 .chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
 .chip.on em{color:rgba(255,255,255,.6)}
 
-.tools{position:sticky;top:52px;z-index:40;background:rgba(231,232,233,.86);
+.tools{position:sticky;top:64px;z-index:40;background:rgba(231,232,233,.86);
   backdrop-filter:saturate(1.8) blur(18px);-webkit-backdrop-filter:saturate(1.8) blur(18px);
   display:flex;gap:9px;align-items:center;
   padding:11px 0;border-bottom:1px solid var(--rule2);margin-bottom:6px}
@@ -719,7 +720,7 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
 <footer><div class="wrapx">
   <div class="fgrid">
     <div>
-      <div class="mark" style="font-size:18px">ÉLORA</div>
+      <div class="mark" style="font-size:30px">ÉLORA</div>
       <p>Maison of leather. Взуття, сумки та аксесуари з натуральної шкіри й замші.</p>
     </div>
     <div class="fcol">
