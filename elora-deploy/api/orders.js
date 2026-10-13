@@ -13,6 +13,7 @@ module.exports = async (req, res) => {
   if (!(await isAdmin(req))) return res.status(401).json({ok: false, error: 'auth'});
   if (!journal.enabled()) return res.json({ok: true, enabled: false, orders: []});
 
+  if (req.method === 'GET' && req.query && req.query.diag) return res.json({ok: true, diag: await journal.diag().catch(e => ({error: String(e)}))});
   if (req.method === 'GET') {
     try { return res.json({ok: true, enabled: true, statuses: STATUS, orders: await journal.list(3)}); }
     catch (e) { console.error(e); return res.status(502).json({ok: false, error: 'storage'}); }
