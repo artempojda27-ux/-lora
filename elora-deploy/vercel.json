@@ -113,5 +113,10 @@
     "api/*.js": {
       "maxDuration": 30
     }
+  },
+  "git": {
+    "deploymentEnabled": {
+      "orders": false
+    }
   }
 }
