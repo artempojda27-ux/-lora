@@ -82,6 +82,19 @@ header{position:sticky;top:0;z-index:30;background:rgba(247,243,236,.7);
 .stat b{display:block;font-family:var(--serif);font-weight:500;font-size:28px;line-height:1.05}
 .stat span{font-size:11.5px;color:var(--dim)}
 
+/* розділи постачальників */
+.chapters{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.chap{text-align:left;border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:3px;
+  transition:transform .35s var(--spring),box-shadow .3s,border-color .3s}
+.chap:hover{transform:translateY(-2px)}
+.chap.on{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange),var(--shadow)}
+.chap small{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);font-weight:500}
+.chap b{font-family:var(--serif);font-weight:500;font-size:30px;line-height:1.1}
+.chap span{font-size:12.5px;color:var(--dim)}
+.chap em{font-style:normal;font-size:12px;color:var(--orange);font-weight:500}
+.chap:disabled{opacity:.5;cursor:default;transform:none}
+@media(max-width:860px){.chapters{grid-template-columns:1fr 1fr}.chap b{font-size:24px}}
+
 /* масові дії */
 .bulk{border-radius:22px;padding:20px 22px;margin-bottom:16px}
 .bulk h2{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);font-weight:500;margin-bottom:14px}
@@ -206,8 +219,10 @@ header{position:sticky;top:0;z-index:30;background:rgba(247,243,236,.7);
     </div>
   </section>
 
+  <section class="chapters" id="chapters" aria-label="Постачальники"></section>
+
   <section class="bulk glass">
-    <h2>Масова зміна</h2>
+    <h2 id="bulkTitle">Масова зміна</h2>
     <div class="brow">
       <div class="field"><label for="act">Дія</label>
         <select class="sel" id="act">
@@ -255,7 +270,6 @@ header{position:sticky;top:0;z-index:30;background:rgba(247,243,236,.7);
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
       <input type="search" id="q" placeholder="Пошук за назвою або артикулом">
     </div>
-    <div class="seg" id="dept"><button class="on" data-v="">Усі</button><button data-v="shoes">Взуття</button><button data-v="leather">Сумки</button></div>
     <select class="sel" id="cat"><option value="">Усі категорії</option></select>
     <select class="sel" id="show">
       <option value="">Усі товари</option>
@@ -298,6 +312,7 @@ header{position:sticky;top:0;z-index:30;background:rgba(247,243,236,.7);
 
 <script src="data/catalog.js"></script>
 <script src="data/4cases.js" onerror="void 0"></script>
+<script src="data/podium.js" onerror="void 0"></script>
 <script src="data/prices.js" onerror="void 0"></script>
 <script src="ambient.js" defer></script>
 <script>
@@ -311,10 +326,17 @@ document.addEventListener('error', e => {      // оптимізатор -> пр
   if(!im.classList.contains('broken')){ im.classList.add('broken'); im.dataset.o = ''; im.src = 'assets/mono.png'; }
 }, true);
 const money = n => n == null || isNaN(n) ? '—' : Math.round(n).toLocaleString('uk-UA') + ' ₴';
+/* розділи-постачальники: кожен зі своїм каталогом і своїми масовими правками цін */
+const SUPPLIERS = [
+  {id:'tapuli', name:'TAPULI', note:'Взуття', site:'tapuli.shop'},
+  {id:'4cases', name:'4cases', note:'Сумки та аксесуари', site:'4cases.com.ua'},
+  {id:'podium', name:'Podium', note:'Сумки та аксесуари', site:'podium.ua'},
+];
 const ITEMS = [
-  ...DATA.map(p => ({...p, d:'shoes'})),
-  ...(typeof DATA_4C !== 'undefined' ? DATA_4C.map(p => ({...p, d:'leather'})) : [])
-].map(p => ({id:p.id, t:p.t, c:p.c, d:p.d, img:(p.img||[])[0], sku:(p.sp && p.sp.sku) || '',
+  ...DATA.map(p => ({...p, d:'shoes', s:'tapuli'})),
+  ...(typeof DATA_4C !== 'undefined' ? DATA_4C.map(p => ({...p, d:'leather', s:'4cases'})) : []),
+  ...(typeof DATA_PD !== 'undefined' ? DATA_PD.map(p => ({...p, d:'leather', s:'podium'})) : [])
+].map(p => ({id:p.id, t:p.t, c:p.c, d:p.d, s:p.s, b:p.b, img:(p.img||[])[0], sku:(p.sp && p.sp.sku) || '',
              p0:p.p, o0:p.o ?? null}));
 const BYID = new Map(ITEMS.map(x => [x.id, x]));
 const SAVED = typeof PRICES !== 'undefined' ? PRICES : {};
@@ -328,7 +350,7 @@ let savedSnap = snapshot();
 const history = [];
 const selected = new Set();
 const PAGE = 120;
-const F = {q:'', dept:'', cat:'', show:'', shown:PAGE};
+const F = {q:'', sup:'', cat:'', show:'', shown:PAGE};
 
 function snapshot(){ return JSON.stringify([...cur]); }
 function isEdited(x){ const c = cur.get(x.id); return c.p !== x.p0 || (c.o ?? null) !== x.o0; }
@@ -371,7 +393,7 @@ function compute(x, act, val, rnd, base){
 function visible(){
   const q = F.q.toLowerCase();
   return ITEMS.filter(x =>
-    (!F.dept || x.d === F.dept) && (!F.cat || x.c === F.cat) &&
+    (!F.sup || x.s === F.sup) && (!F.cat || x.c === F.cat) &&
     (!q || `${x.t} ${x.sku} ${x.id}`.toLowerCase().includes(q)) &&
     (F.show !== 'edited' || isEdited(x)) &&
     (F.show !== 'sale' || (cur.get(x.id).o ?? 0) > cur.get(x.id).p) &&
@@ -389,7 +411,7 @@ function rowHTML(x){
   return `<div class="row ${isEdited(x) ? 'changed' : ''}" data-id="${x.id}">
     <input type="checkbox" data-sel ${selected.has(x.id) ? 'checked' : ''} aria-label="Вибрати">
     <img src="${IMG(x.img)}" data-o="${x.img || ''}" alt="" loading="lazy">
-    <div><div class="t">${x.t}</div><div class="m">${x.c}${x.sku ? ' · ' + x.sku : ''}</div></div>
+    <div><div class="t">${x.t}</div><div class="m">${SUPPLIERS.find(s => s.id === x.s)?.name || ''} · ${x.c}${x.sku ? ' · ' + x.sku : ''}</div></div>
     <div class="orig">${money(x.p0)}${x.o0 ? ` <s>${money(x.o0)}</s>` : ''}</div>
     <input class="pin new" data-f="p" type="number" inputmode="decimal" min="0" step="any" value="${c.p}" aria-label="Ціна">
     <input class="pin old c-old" data-f="o" type="number" inputmode="decimal" min="0" step="any" value="${c.o ?? ''}" placeholder="—" aria-label="Стара ціна">
@@ -409,6 +431,7 @@ function draw(){
   stats(); preview();
 }
 function stats(){
+  drawChapters();
   $('#stTotal').textContent = ITEMS.length.toLocaleString('uk-UA');
   $('#stEdited').textContent = ITEMS.filter(isEdited).length.toLocaleString('uk-UA');
   $('#stSale').textContent = ITEMS.filter(x => (cur.get(x.id).o ?? 0) > cur.get(x.id).p).length.toLocaleString('uk-UA');
@@ -490,13 +513,28 @@ addEventListener('keydown', e => {
 
 /* ================= фільтри UI ================= */
 function fillCats(){
-  const cats = [...new Set(ITEMS.filter(x => !F.dept || x.d === F.dept).map(x => x.c))];
+  const cats = [...new Set(ITEMS.filter(x => !F.sup || x.s === F.sup).map(x => x.c))];
   $('#cat').innerHTML = '<option value="">Усі категорії</option>' +
     cats.map(c => `<option ${c === F.cat ? 'selected' : ''}>${c}</option>`).join('');
 }
 function segHandler(sel, fn){ $(sel).onclick = e => { const b = e.target.closest('button'); if(!b) return;
   $(sel).querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); fn(b.dataset.v); }; }
-segHandler('#dept', v => { F.dept = v; F.cat = ''; F.shown = PAGE; fillCats(); draw(); });
+function drawChapters(){
+  const card = (id, name, note, list) => {
+    const edited = list.filter(isEdited).length, sale = list.filter(x => (cur.get(x.id).o ?? 0) > cur.get(x.id).p).length;
+    const avg = list.length ? list.reduce((a, x) => a + cur.get(x.id).p, 0) / list.length : 0;
+    return `<button class="chap glass ${F.sup === id ? 'on' : ''}" data-sup="${id}" ${list.length || !id ? '' : 'disabled'}>
+      <small>${note}</small><b>${name}</b>
+      <span>${list.length ? `${list.length.toLocaleString('uk-UA')} ${plural(list.length, 'товар', 'товари', 'товарів')} · сер. ${money(avg)}` : 'Немає товарів'}</span>
+      <em>${edited ? `Змінено: ${edited}` : 'Ціни з фіду'}${sale ? ` · знижки: ${sale}` : ''}</em></button>`;
+  };
+  $('#chapters').innerHTML = card('', 'Усі', 'Усі постачальники', ITEMS) +
+    SUPPLIERS.map(sp => card(sp.id, sp.name, sp.note, ITEMS.filter(x => x.s === sp.id))).join('');
+  const sp = SUPPLIERS.find(x => x.id === F.sup);
+  $('#bulkTitle').textContent = sp ? `Масова зміна · ${sp.name}` : 'Масова зміна · усі постачальники';
+}
+$('#chapters').onclick = e => { const b = e.target.closest('[data-sup]'); if(!b || b.disabled) return;
+  F.sup = b.dataset.sup; F.cat = ''; F.shown = PAGE; fillCats(); draw(); };
 segHandler('#base', preview);
 segHandler('#scope', preview);
 $('#cat').onchange = e => { F.cat = e.target.value; F.shown = PAGE; draw(); };

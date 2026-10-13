@@ -89,6 +89,10 @@
       {
         "protocol": "https",
         "hostname": "4cases.com.ua"
+      },
+      {
+        "protocol": "https",
+        "hostname": "podium.ua"
       }
     ],
     "formats": [

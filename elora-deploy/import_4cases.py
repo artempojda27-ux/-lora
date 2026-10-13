@@ -166,7 +166,10 @@ def localize(url):
             im = bg
         im = im.convert('RGB')
         im.thumbnail((700, 800))
-        im.save(path, 'WEBP', quality=80, method=6)
+        im.save(path, 'WEBP', quality=86, method=6)
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from tools.unify import unify_file
+        unify_file(path)            # єдиний фон ÉLORA (tools/unify.py)
         return path
     except Exception as e:
         print(f'  ! фото {url}: {e}', file=sys.stderr)
