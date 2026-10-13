@@ -718,7 +718,7 @@ async function loadOrders(){
   $('#olist').innerHTML = '<div class="oempty">Завантаження…</div>';
   try{
     const j = await ordApi();
-    if(!j.enabled){ $('#olist').innerHTML = '<div class="oempty">Журнал ще не підключений у Vercel (ORDERS_KEY, GH_ORDERS_TOKEN).</div>'; return; }
+    if(!j.enabled){ $('#olist').innerHTML = '<div class="oempty">Замовлення надходять у Telegram-групу «Elora orders» — там і ведіть їх.<br><small style="font-family:var(--sans);font-size:13px">Журнал в адмінці вимкнений (не задані ORDERS_KEY і GH_ORDERS_TOKEN у Vercel).</small></div>'; return; }
     ORD.list = j.orders; ORD.statuses = j.statuses; drawOrders();
   }catch(e){ $('#olist').innerHTML = `<div class="oempty">${e.message}</div>`; }
 }
