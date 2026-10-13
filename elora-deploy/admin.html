@@ -83,6 +83,36 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
 .stat b{display:block;font-family:var(--serif);font-weight:500;font-size:28px;line-height:1.05}
 .stat span{font-size:11.5px;color:var(--dim)}
 
+/* журнал замовлень */
+.views{margin-left:18px}
+.views .pill{display:none;margin-left:6px;background:var(--ink);color:#fff}
+.views .pill.on{display:inline-grid}
+.ofilters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.ofilters button{height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--rule);background:var(--surf);font-size:13px;font-weight:500}
+.ofilters button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.ofilters em{font-style:normal;opacity:.6;margin-left:4px}
+.ord{border-radius:20px;padding:20px 22px;margin-bottom:14px}
+.ord-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.ord-h b{font-family:var(--serif);font-weight:500;font-size:26px}
+.ord-h time{font-size:12.5px;color:var(--faint)}
+.ord-h .st{margin-left:auto;font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--up)}
+.ord-g{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+@media(max-width:860px){.ord-g{grid-template-columns:1fr}}
+.ord-items div{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule2);font-size:13.5px}
+.ord-items div:last-child{border-bottom:none}
+.ord-items a{color:var(--ink)}
+.ord-items small{color:var(--faint)}
+.ord-items .pr{margin-left:auto;white-space:nowrap;font-weight:600}
+.ord-c{font-size:13.5px;display:grid;gap:5px;align-content:start}
+@media(max-width:560px){.hin .mark{display:none}.views{margin-left:0}}
+.ord-c a{color:var(--ink)}
+.ord-a{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--rule2)}
+.ord-a .inp{height:36px;font-size:14px}
+.ord-a .sel{height:36px;font-size:13.5px}
+.notify{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.notify a,.notify button{height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--rule);background:var(--surf);
+  font-size:12.5px;font-weight:500;display:inline-flex;align-items:center;color:var(--ink);text-decoration:none}
+.oempty{padding:60px 20px;text-align:center;color:var(--dim);font-family:var(--serif);font-size:24px}
 /* розділи постачальників */
 .chapters{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
 .chap{text-align:left;border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:3px;
@@ -208,7 +238,8 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
 <div class="ambient" aria-hidden="true"><i></i><i></i><i></i><canvas></canvas></div>
 
 <header><div class="wrap hin">
-  <div class="mark">ÉLORA<small class="hide-m">Ціни</small></div>
+  <div class="mark">ÉLORA</div>
+  <div class="seg views" id="views"><button class="on" data-v="prices">Ціни</button><button data-v="orders">Замовлення <b class="pill" id="newN"></b></button></div>
   <div class="sp"></div>
   <button class="btn ghost" id="undo" disabled title="Скасувати (Ctrl+Z)">
     <svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span class="hide-m">Скасувати</span></button>
@@ -221,7 +252,19 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
   <a class="btn sec hide-m" href="./" target="_blank" rel="noopener">Вітрина ↗</a>
 </div></header>
 
-<main class="wrap">
+<main class="wrap" id="viewOrders" hidden>
+  <section class="top">
+    <div>
+      <h1>Журнал <em>замовлень</em></h1>
+      <p>Усі замовлення з сайту: статус, ТТН і повідомлення клієнту. Зміни статусу бот дублює в Telegram-групу.</p>
+    </div>
+    <button class="btn sec" id="ordReload">Оновити</button>
+  </section>
+  <div class="ofilters" id="ofilters"></div>
+  <section id="olist"></section>
+</main>
+
+<main class="wrap" id="viewPrices">
   <section class="top">
     <div>
       <h1>Керування <em>цінами</em></h1>
@@ -655,6 +698,112 @@ async function errText(r){
   return j.message || `Помилка GitHub (${r.status})`;
 }
 $('#save').onclick = save;
+
+/* ================= журнал замовлень ================= */
+const ORD = {list: [], statuses: {}, filter: 'active'};
+const FILTERS = [['active', 'Активні'], ['new', 'Нові'], ['confirmed', 'Підтверджені'], ['supplier', 'У постачальника'],
+  ['shipped', 'Відправлені'], ['done', 'Виконані'], ['cancelled', 'Скасовані'], ['all', 'Усі']];
+const ACTIVE = ['new', 'confirmed', 'supplier', 'shipped'];
+const ordApi = async (body) => {
+  const c = cfg();
+  const r = await fetch('/api/orders', {method: body ? 'POST' : 'GET', body: body ? JSON.stringify(body) : undefined,
+    headers: {Authorization: `Bearer ${c.token}`, 'Content-Type': 'application/json'}, cache: 'no-store'});
+  const j = await r.json().catch(() => ({}));
+  if(r.status === 401) throw new Error('GitHub токен не підходить — перевірте ⚙');
+  if(!r.ok || !j.ok) throw new Error(j.error === 'storage' ? 'Сховище замовлень недоступне' : (j.error || `Помилка ${r.status}`));
+  return j;
+};
+async function loadOrders(){
+  if(!cfg().token){ openModal(); return toast('Спершу додайте GitHub токен'); }
+  $('#olist').innerHTML = '<div class="oempty">Завантаження…</div>';
+  try{
+    const j = await ordApi();
+    if(!j.enabled){ $('#olist').innerHTML = '<div class="oempty">Журнал ще не підключений у Vercel (ORDERS_KEY, GH_ORDERS_TOKEN).</div>'; return; }
+    ORD.list = j.orders; ORD.statuses = j.statuses; drawOrders();
+  }catch(e){ $('#olist').innerHTML = `<div class="oempty">${e.message}</div>`; }
+}
+const nowrap = s => String(s ?? '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+function custLink(c){
+  const h = (c.handle || '').trim(), u = h.replace(/^@/, '').replace(/^https?:\/\/[^/]+\//, '').replace(/\/.*$/, '');
+  const num = h.replace(/\D/g, ''), ph = num.length === 10 ? '38' + num : num;
+  if(c.via === 'instagram') return `<a href="https://instagram.com/${encodeURIComponent(u)}" target="_blank" rel="noopener">Instagram @${nowrap(u)}</a>`;
+  if(c.via === 'whatsapp') return `<a href="https://wa.me/${ph}" target="_blank" rel="noopener">WhatsApp ${nowrap(h)}</a>`;
+  return /^[+\d\s()-]+$/.test(h) && num.length >= 10 ? `<a href="https://t.me/+${ph}" target="_blank" rel="noopener">Telegram ${nowrap(h)}</a>`
+    : `<a href="https://t.me/${encodeURIComponent(u)}" target="_blank" rel="noopener">Telegram @${nowrap(u)}</a>`;
+}
+function ttnText(o){
+  return `Вітаємо! Ваше замовлення №${o.id} в ÉLORA відправлено Новою поштою. ТТН ${o.ttn}. Відстежити: https://novaposhta.ua/tracking/?cargo_number=${o.ttn}`;
+}
+function notifyHTML(o){
+  if(!o.ttn) return '';
+  const c = o.customer, t = encodeURIComponent(ttnText(o)), h = (c.handle || '').trim();
+  const num = (c.via === 'whatsapp' ? h : c.phone).replace(/\D/g, ''), ph = num.length === 10 ? '38' + num : num;
+  const u = h.replace(/^@/, '').replace(/^https?:\/\/[^/]+\//, '').replace(/\/.*$/, '');
+  const links = [`<a href="https://wa.me/${ph}?text=${t}" target="_blank" rel="noopener">WhatsApp з текстом ↗</a>`];
+  if(c.via === 'telegram') links.push(`<a href="${/^[+\d\s()-]+$/.test(h) ? `https://t.me/+${ph}` : `https://t.me/${encodeURIComponent(u)}`}" target="_blank" rel="noopener">Telegram ↗</a>`);
+  if(c.via === 'instagram') links.push(`<a href="https://ig.me/m/${encodeURIComponent(u)}" target="_blank" rel="noopener">Instagram ↗</a>`);
+  links.push(`<a href="viber://chat?number=%2B${ph}" rel="noopener">Viber ↗</a>`);
+  return `<div class="notify"><button data-copy="${nowrap(ttnText(o))}">Скопіювати текст для клієнта</button>${links.join('')}</div>`;
+}
+function drawOrders(){
+  const cnt = k => k === 'all' ? ORD.list.length : k === 'active' ? ORD.list.filter(o => ACTIVE.includes(o.status)).length : ORD.list.filter(o => o.status === k).length;
+  $('#ofilters').innerHTML = FILTERS.map(([k, n]) => `<button data-f="${k}" class="${ORD.filter === k ? 'on' : ''}">${n}<em>${cnt(k)}</em></button>`).join('');
+  const nn = cnt('new'); $('#newN').textContent = nn; $('#newN').classList.toggle('on', nn > 0);
+  const rows = ORD.list.filter(o => ORD.filter === 'all' || (ORD.filter === 'active' ? ACTIVE.includes(o.status) : o.status === ORD.filter));
+  if(!rows.length){ $('#olist').innerHTML = '<div class="oempty">Замовлень немає</div>'; return; }
+  const supName = s => (SUPPLIERS.find(x => x.id === s) || {}).name || s || '';
+  $('#olist').innerHTML = rows.map(o => {
+    const c = o.customer || {}, d = new Date(o.at);
+    return `<article class="ord glass" data-id="${o.id}" data-at="${o.at}">
+      <div class="ord-h"><b>№${o.id}</b><time>${d.toLocaleDateString('uk-UA')} ${d.toLocaleTimeString('uk-UA', {hour:'2-digit', minute:'2-digit'})}</time>
+        <span class="st">${ORD.statuses[o.status] || o.status}</span></div>
+      <div class="ord-g">
+        <div class="ord-items">${(o.items || []).map(i => `<div><span>${i.stock === true ? '✅' : i.stock === false ? '❌' : '⚠️'}</span>
+          <span><a href="./#p=${encodeURIComponent(i.id)}" target="_blank" rel="noopener">${nowrap(i.t)}</a><br>
+          <small>${[i.col, i.size && i.size !== 'one size' ? 'розмір ' + i.size : '', supName(i.s)].filter(Boolean).map(nowrap).join(' · ')}
+          ${i.u ? ` · <a href="${nowrap(i.u)}" target="_blank" rel="noopener">у постачальника ↗</a>` : ''}</small></span>
+          <span class="pr">${money(i.price)}</span></div>`).join('')}
+          <div><b>Разом</b><span class="pr">${money(o.total)}</span></div></div>
+        <div class="ord-c">
+          <div><b>${nowrap(c.name)}</b></div>
+          <div><a href="tel:${nowrap((c.phone || '').replace(/[^+\d]/g, ''))}">${nowrap(c.phone)}</a></div>
+          <div>${custLink(c)}</div>
+          <div>Нова пошта: ${nowrap(c.city)}, ${nowrap(c.dep)}</div>
+          ${c.note ? `<div>📝 ${nowrap(c.note)}</div>` : ''}
+          ${o.comment ? `<div>💬 ${nowrap(o.comment)}</div>` : ''}
+        </div>
+      </div>
+      <div class="ord-a">
+        <select class="sel" data-k="status">${Object.entries(ORD.statuses).map(([k, n]) => `<option value="${k}" ${k === o.status ? 'selected' : ''}>${n}</option>`).join('')}</select>
+        <input class="inp" data-k="ttn" placeholder="ТТН Нової пошти" inputmode="numeric" value="${nowrap(o.ttn || '')}" style="width:190px">
+        <input class="inp" data-k="comment" placeholder="Коментар" value="${nowrap(o.comment || '')}" style="flex:1;min-width:160px">
+        <button class="btn pri" data-save>Зберегти</button>
+      </div>
+      ${notifyHTML(o)}
+    </article>`;
+  }).join('');
+}
+$('#ofilters').onclick = e => { const b = e.target.closest('[data-f]'); if(!b) return; ORD.filter = b.dataset.f; drawOrders(); };
+$('#ordReload').onclick = loadOrders;
+$('#olist').addEventListener('click', async e => {
+  const cp = e.target.closest('[data-copy]');
+  if(cp){ try{ await navigator.clipboard.writeText(cp.dataset.copy); toast('Текст скопійовано'); }catch(err){ prompt('Скопіюйте текст:', cp.dataset.copy); } return; }
+  const sv = e.target.closest('[data-save]'); if(!sv) return;
+  const card = sv.closest('.ord'), get = k => card.querySelector(`[data-k="${k}"]`).value;
+  let status = get('status'); const ttn = get('ttn').replace(/\D/g, '');
+  if(ttn && ['new', 'confirmed', 'supplier'].includes(status)) status = 'shipped';   // є ТТН — отже відправлено
+  sv.disabled = true;
+  try{
+    const {order} = await ordApi({id: card.dataset.id, at: card.dataset.at, status, ttn, comment: get('comment')});
+    ORD.list = ORD.list.map(o => o.id === order.id ? order : o); drawOrders();
+    toast(order.ttn && status === 'shipped' ? 'Збережено. Надішліть клієнту ТТН кнопками нижче' : 'Збережено');
+  }catch(err){ toast(err.message, true); sv.disabled = false; }
+});
+segHandler('#views', v => {
+  $('#viewOrders').hidden = v !== 'orders'; $('#viewPrices').hidden = v !== 'prices';
+  $('#dock').style.display = v === 'orders' ? 'none' : '';
+  if(v === 'orders') loadOrders();
+});
 
 /* ================= Telegram: куди надходять замовлення ================= */
 const tgApi = async (q, body) => {

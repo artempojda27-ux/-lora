@@ -7,6 +7,7 @@
 const { chatId } = require('./_telegram');
 const { check } = require('./_stock');
 const { products, suppliers, supplierOf } = require('./_catalog');
+const journal = require('./_orders');
 const MARK = {true: '✅', false: '❌ немає', null: '⚠️ не перевірено'};
 
 const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[c]));
@@ -119,7 +120,16 @@ module.exports = async (req, res) => {
   try {
     const r = await send({text});
     if (!r.ok) throw new Error(`telegram ${r.status}`);
+    const msg = await r.json().catch(() => ({}));
     for (const m of orders) await send(m).catch(e => console.error('supplier msg', e));
+    /* журнал замовлень в адмінці (зашифровано); помилка журналу не ламає замовлення */
+    await journal.add({
+      id, at: new Date().toISOString(), status: 'new', total,
+      tg: msg.result ? msg.result.message_id : null,
+      customer: {...c, via, handle},
+      items: items.map(i => ({...i, s: info(i).s, u: info(i).u,
+        stock: stock.has(`${i.id}|${i.size}`) ? stock.get(`${i.id}|${i.size}`) : null})),
+    }).catch(e => console.error('journal', e));
     return res.status(200).json({ok: true, id});
   } catch (e) {
     console.error('order', e);
