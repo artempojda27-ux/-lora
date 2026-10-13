@@ -108,5 +108,10 @@
       "image/webp"
     ],
     "minimumCacheTTL": 2678400
+  },
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 30
+    }
   }
 }

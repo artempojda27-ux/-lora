@@ -115,7 +115,7 @@ def product(pid, url, cat):
     if not (title and price and imgs):
         return None
     desc = clean(ld.get('description'))
-    return {'id': 'pd-' + pid, 't': title, 'c': cat, 'cs': SLUG[cat],
+    return {'id': 'pd-' + pid, 'u': url, 't': title, 'c': cat, 'cs': SLUG[cat],
             'b': (ld.get('brand') or {}).get('name') or 'Podium', 'p': price, 'o': None,
             'col': pick(COLORS, title), 'mat': pick(MATERIALS, title, 'Натуральна шкіра'),
             'sz': [], 'img': imgs[:8], 'sp': specs_from(desc)}
@@ -155,7 +155,7 @@ def from_feed(src):
         if not cat:
             continue
         old = float((t('oldprice') or '0').replace(',', '.') or 0)
-        rows.append({'id': 'pd-' + (o.get('id') or t('vendorCode')), 't': name, 'c': cat, 'cs': SLUG[cat],
+        rows.append({'id': 'pd-' + (o.get('id') or t('vendorCode')), 'u': t('url'), 't': name, 'c': cat, 'cs': SLUG[cat],
                      'b': t('vendor') or 'Podium', 'p': price, 'o': old if old > price else None,
                      'col': pick(COLORS, f"{params.get('Колір', '')} {params.get('Цвет', '')} {name}"),
                      'mat': pick(MATERIALS, f"{params.get('Матеріал', '')} {params.get('Материал', '')} {name}", 'Натуральна шкіра'),
