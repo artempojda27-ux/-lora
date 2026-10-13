@@ -96,8 +96,9 @@ def mark(paths):
 
 
 def unify_file(path):
-    """Обробити файл на місці. True — успіх (або вже оброблений)."""
-    if path in done_set():
+    """Обробити файл на місці. True — успіх (або вже оброблений).
+    ELORA_UNIFY_LATER=1 — лише скачати, обробити потім пачкою: python3 tools/unify.py img/…"""
+    if os.environ.get('ELORA_UNIFY_LATER') or path in done_set():
         return True
     try:
         out = unify(Image.open(path))
