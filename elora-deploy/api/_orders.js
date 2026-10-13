@@ -90,4 +90,20 @@ async function update(id, at, patch) {
   }, `order ${id}: ${patch.status || 'update'}`);
 }
 
-module.exports = {enabled, add, list, update};
+/* самодіагностика для адмінки: що відповідає GitHub */
+async function diag() {
+  const out = {enabled: enabled()};
+  if (!out.enabled) return out;
+  const ref = await gh(`git/ref/heads/${BRANCH}`); out.ref = ref.status;
+  if (ref.status === 404) {
+    const main = await gh('git/ref/heads/main'); out.main = main.status;
+    if (main.ok) {
+      const sha = (await main.json()).object.sha;
+      const c = await gh('git/refs', {method: 'POST', body: JSON.stringify({ref: `refs/heads/${BRANCH}`, sha})});
+      out.create = c.status; if (!c.ok) out.createError = (await c.text()).slice(0, 300);
+    }
+  }
+  return out;
+}
+
+module.exports = {enabled, add, list, update, diag};
