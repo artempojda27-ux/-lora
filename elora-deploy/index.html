@@ -507,6 +507,14 @@ header.menu{z-index:95;background:transparent!important;
   padding:13px 14px;font-size:16px}
 .form input::placeholder{color:var(--faint)}
 .form input:focus{outline:none;border-color:var(--orange)}
+@media(max-width:820px){.cart{overflow-y:auto}.citems{flex:none;overflow:visible}}
+.via-l{font-size:12px;color:var(--dim);margin:6px 2px 0}
+.via{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.via button{height:40px;border-radius:12px;border:1px solid var(--rule);background:var(--surf);font-size:13.5px;font-weight:500;
+  color:var(--ink);transition:background .2s,color .2s,border-color .2s}
+.via button:hover{border-color:var(--ink)}
+.via button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.form input:disabled{opacity:.55}
 .form .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 body .toast{white-space:normal;text-align:center;width:max-content;max-width:calc(100vw - 32px);border-radius:20px}
 .done{text-align:center;padding:60px 24px}
@@ -1163,6 +1171,13 @@ function renderCart(done){
       <input id="fPhone" placeholder="+38 (0__) ___ __ __" inputmode="tel" autocomplete="tel">
       <input id="fCity" placeholder="Місто" autocomplete="address-level2">
       <input id="fDep" placeholder="Відділення Нової пошти">
+      <div class="via-l">Де вам зручніше спілкуватися?</div>
+      <div class="via" id="via" role="radiogroup" aria-label="Месенджер">
+        <button type="button" role="radio" data-via="telegram" aria-checked="false">Telegram</button>
+        <button type="button" role="radio" data-via="whatsapp" aria-checked="false">WhatsApp</button>
+        <button type="button" role="radio" data-via="instagram" aria-checked="false">Instagram</button>
+      </div>
+      <input id="fVia" placeholder="Спершу оберіть месенджер" disabled autocomplete="off">
       <input id="fNote" placeholder="Коментар (необов'язково)">
       <input id="fCompany" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
     </div>
@@ -1176,6 +1191,15 @@ $('#cart').addEventListener('click', e=>{
     badge('#cartN', state.cart.length); persist(); renderCart(); return;
   }
   if(e.target.id === 'checkout'){ checkout(e.target); return; }
+  const via = e.target.closest('[data-via]');
+  if(via){
+    $('#via').querySelectorAll('button').forEach(b => { const on = b === via; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+    const f = $('#fVia'); f.disabled = false; f.dataset.via = via.dataset.via;
+    f.placeholder = {telegram:'@нік у Telegram або номер', whatsapp:'Номер WhatsApp', instagram:'@нік в Instagram'}[via.dataset.via];
+    f.inputMode = via.dataset.via === 'whatsapp' ? 'tel' : 'text';
+    if(via.dataset.via === 'whatsapp' && !f.value) f.value = $('#fPhone').value;
+    f.focus(); return;
+  }
   if(e.target.id === 'cartClose') closeAll();
 });
 
@@ -1185,10 +1209,14 @@ async function checkout(btn){
   if(need.length){ toast('Заповніть контактні дані'); $('#'+need[0]).focus(); return; }
   const digits = v('fPhone').replace(/\D/g, '');
   if(digits.length < 10 || digits.length > 13){ toast('Перевірте номер телефону'); $('#fPhone').focus(); return; }
+  const via = $('#fVia').dataset.via;
+  if(!via){ toast('Оберіть Telegram, WhatsApp або Instagram'); $('#via button').focus(); return; }
+  if(v('fVia').replace(/[@\s]/g, '').length < 3){ toast('Вкажіть ваш нік або номер'); $('#fVia').focus(); return; }
   btn.disabled = true; btn.textContent = 'Надсилаємо…';
   try{
     const r = await fetch('/api/order', {method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name:v('fName'), phone:v('fPhone'), city:v('fCity'), dep:v('fDep'), note:v('fNote'),
+        contact:{via, handle:v('fVia')},
         company:v('fCompany'), items:state.cart.map(({id, t, col, size, price}) => ({id, t, col, size, price}))})});
     const j = await r.json().catch(() => ({}));
     if(!r.ok || !j.ok) throw new Error(j.error || r.status);
