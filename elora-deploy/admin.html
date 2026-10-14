@@ -232,6 +232,7 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .toast.err{background:rgba(179,38,30,.94)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+[hidden]{display:none!important}
 .nokey{max-width:1200px;margin:14px auto 0;padding:14px 18px;border-radius:14px;background:#F6E9E9;color:#7A2424;
   font-size:14px;line-height:1.45;border:1px solid #E8CFCF}
 .nokey code{font-size:12.5px}
@@ -250,7 +251,7 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
     <svg viewBox="0 0 24 24"><path d="M21 4L3 11l6 2 2 6 3-4 5 4 2-15z"/><path d="M9 13l9-6"/></svg><span class="hide-m">Telegram</span></button>
   <button class="btn sec" id="syncBtn" title="Завантажити свіжі каталоги TAPULI та 4cases">
     <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8"/><path d="M4 3v5h5"/><path d="M4 13a8 8 0 0 0 14.6 4.5L20 16"/><path d="M20 21v-5h-5"/></svg><span class="hide-m">Оновити каталог</span></button>
-  <button class="btn ghost" id="settingsBtn" title="Налаштування GitHub">
+  <button class="btn ghost" id="settingsBtn" title="Налаштування GitHub" hidden>
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   <a class="btn sec hide-m" href="./" target="_blank" rel="noopener">Вітрина ↗</a>
 </div></header>
@@ -681,6 +682,9 @@ const DEF = {owner:'artempojda27-ux', repo:'-lora', branch:'main', path:'elora-d
 function cfg(){ try{ return {...DEF, ...JSON.parse(localStorage.getItem(CFG_KEY) || '{}')}; }catch(e){ return {...DEF}; } }
 function openModal(){
   const c = cfg();
+  /* токен GitHub більше не потрібен: без особистого посилання показуємо підказку, а не форму токена */
+  if(!c.token){ $('#nokey').hidden = false; scrollTo({top:0, behavior:'smooth'});
+    return toast(KEY ? 'Усе налаштовано — токен не потрібен' : 'Відкрийте адмінку за вашим особистим посиланням', !KEY); }
   $('#gOwner').value = c.owner; $('#gRepo').value = c.repo; $('#gBranch').value = c.branch;
   $('#gPath').value = c.path; $('#gToken').value = c.token;
   $('#modal').classList.add('on'); $('#scrim').classList.add('on');
@@ -769,7 +773,7 @@ const ordApi = async (body) => {
   return j;
 };
 async function loadOrders(){
-  if(!KEY && !cfg().token){ openModal(); return toast('Спершу додайте GitHub токен'); }
+  if(!KEY && !cfg().token){ return openModal(); }
   $('#olist').innerHTML = '<div class="oempty">Завантаження…</div>';
   try{
     const j = await ordApi();
@@ -873,7 +877,7 @@ const tgApi = async (q, body) => {
 };
 let tgPicked = null;
 async function openTg(){
-  if(!KEY && !cfg().token){ openModal(); return toast('Спершу додайте GitHub токен'); }
+  if(!KEY && !cfg().token){ return openModal(); }
   $('#tgModal').classList.add('on'); $('#scrim').classList.add('on');
   $('#tgChats').innerHTML = ''; tgPicked = null; $('#tgSave').disabled = true; $('#tgTest').disabled = true;
   $('#tgStatus').textContent = 'Перевіряємо…';
@@ -924,7 +928,7 @@ $('#tgSave').onclick = async () => {
 /* кнопка «Оновити каталог»: запускає GitHub Actions workflow .github/workflows/catalog.yml */
 $('#syncBtn').onclick = async () => {
   const c = cfg();
-  if(!KEY && !c.token){ openModal(); return toast('Додайте GitHub токен'); }
+  if(!KEY && !c.token){ return openModal(); }
   if(!confirm('Завантажити свіжі каталоги постачальників? Це займе 10–30 хвилин, після чого сайт оновиться сам.')) return;
   const btn = $('#syncBtn'); btn.disabled = true;
   if(KEY){
