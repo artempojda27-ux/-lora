@@ -566,6 +566,8 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
 .flag{background:none;color:var(--brown);padding:0;top:14px;left:14px;font-size:10px;font-weight:500;
   letter-spacing:.24em;text-transform:uppercase;border-radius:0}
 .fav{background:rgba(255,255,255,.6);width:32px;height:32px}
+.low{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#8A2B2B;margin-top:8px;font-weight:500}
+.info .low{margin:0 0 10px}
 .brand{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
 .card h3{font-size:13.5px;font-weight:400;line-height:1.5;letter-spacing:.005em;margin-bottom:6px}
 .sub{font-size:12px;color:var(--faint);margin-bottom:10px}
@@ -986,6 +988,8 @@ function visible(){
   return r.sort(S[state.sort]);
 }
 
+/* мало в наявності у постачальника: 4cases — 1–2 шт., взуття — останній розмір */
+const lowOf = p => p.q != null && p.q > 0 && p.q <= 2 ? `Залишилось ${p.q} шт.` : p.sz && p.sz.length === 1 ? 'Останній розмір' : '';
 /* бренд показуємо лише справжній (не назву постачальника) */
 const brandOf = p => p.b && !/^(tapuli|4cases|podium)$/i.test(p.b) ? p.b : '';
 function cardHTML(p){
@@ -1007,6 +1011,7 @@ function cardHTML(p){
     <h3 data-open="${i}">${p.t}</h3>
     <div class="sub">${[p.col, p.mat].filter(Boolean).join(' · ')}</div>
     <div class="price">${p.o ? `<ins>${money(p.p)}</ins><s>${money(p.o)}</s>` : money(p.p)}</div>
+    ${lowOf(p) ? `<div class="low">${lowOf(p)}</div>` : ''}
   </article>`;
 }
 
@@ -1081,12 +1086,13 @@ function openProduct(p){
       ${p.sz.length ? `<div class="eyebrow">Оберіть розмір</div>
       <div class="pick">${ALL_SIZES.map(s=>
         p.sz.includes(s) ? `<button data-s="${s}">${s}</button>` : '').join('')}</div>
+      ${lowOf(p) ? `<div class="low">${lowOf(p)} — встигніть замовити</div>` : ''}
       <div class="guide">${p.sz.length <= 2
         ? 'Останні пари цієї моделі — розміри швидко закінчуються.'
         : 'Взуття маломірить на пів розміру — за потреби беріть на розмір більший.'}
         <a href="#sizes" data-page="sizes" class="sizelink">Таблиця розмірів</a></div>
       <button class="add" id="addBtn" disabled>Оберіть розмір</button>`
-      : `<div class="guide">Натуральна шкіра · в наявності</div>
+      : `${lowOf(p) ? `<div class="low">${lowOf(p)} — встигніть замовити</div>` : ''}<div class="guide">Натуральна шкіра · в наявності</div>
       <button class="add" id="addBtn">Додати в кошик</button>`}
       <div class="specs">${specs}</div>
     </div>

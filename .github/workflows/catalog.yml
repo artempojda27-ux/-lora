@@ -100,6 +100,8 @@ jobs:
           git commit -q -m "Каталог: автооновлення $(date -u +%Y-%m-%d)" \
             -m "$(git diff --cached --stat -- data | tail -1)"
           git push origin HEAD:main
+          # нагадування в Telegram: що закінчується в постачальників і що зникло (до деплою нової версії)
+          curl -sS -m 60 -X POST https://lora-zeta.vercel.app/api/stock-alerts || true
 
       - name: Підсумок
         if: always()

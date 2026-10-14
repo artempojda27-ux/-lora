@@ -240,7 +240,7 @@ def main():
                 'id': '4c-' + r['slug'], 't': r['t'], 'c': name, 'cs': slug, 'b': '4cases',
                 'p': price(r['p'], a.markup), 'o': price(old, a.markup) if old and old > r['p'] else None,
                 'col': color(r['t'], feats), 'mat': MATERIAL.get(mat.lower(), mat) or 'Натуральна шкіра',
-                'sz': [], 'img': imgs[:6], 'sp': sp,
+                'sz': [], 'img': imgs[:6], 'sp': sp, 'q': r['stock'],
             })
             n += 1
         print(f'  {name}: {n}', flush=True)
