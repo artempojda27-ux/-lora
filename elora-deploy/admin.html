@@ -304,6 +304,8 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
           <option value="100">До 100 ₴</option>
           <option value="9">На …9 ₴ (1 249)</option>
           <option value="99">На …99 ₴ (1 299)</option>
+          <option value="79">На …79 ₴ (1 279)</option>
+          <option value="7999">На …79 або …99 ₴ — найближче</option>
         </select></div>
       <div class="field"><label>База</label>
         <div class="seg" id="base"><button class="on" data-v="cur">Поточна</button><button data-v="orig">З фіду</button></div></div>
@@ -320,6 +322,7 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
       <button data-a="pct" data-v="-5">−5%</button>
       <button data-a="sale" data-v="15">Знижка 15%</button>
       <button data-a="sale" data-v="30">Знижка 30%</button>
+      <button data-a="round" data-r="7999">Ціни на …79 / …99</button>
     </div>
     <div class="preview" id="preview"></div>
   </section>
@@ -447,6 +450,12 @@ function round(v, mode){
     case '100': return Math.round(v / 100) * 100;
     case '9': return Math.max(9, Math.round(v / 10) * 10 - 1);
     case '99': return Math.max(99, Math.round(v / 100) * 100 - 1);
+    case '79': return Math.max(79, Math.round((v - 79) / 100) * 100 + 79);
+    case '7999': {                                   // найближче з …79 і …99
+      const h = Math.floor(v / 100) * 100;
+      const c = [h - 21, h - 1, h + 79, h + 99].filter(x => x > 0);
+      return c.reduce((best, x) => Math.abs(x - v) < Math.abs(best - v) ? x : best, c[0]);
+    }
     default: return Math.round(v * 100) / 100;
   }
 }
@@ -553,7 +562,8 @@ $('#apply').onclick = () => {
   draw(); toast(`Оновлено ${T.length} ${plural(T.length, 'ціну', 'ціни', 'цін')}`);
 };
 $('#presets').onclick = e => { const b = e.target.closest('button'); if(!b) return;
-  $('#act').value = b.dataset.a; $('#val').value = b.dataset.v; preview(); };
+  $('#act').value = b.dataset.a; if(b.dataset.v) $('#val').value = b.dataset.v;
+  if(b.dataset.r) $('#rnd').value = b.dataset.r; preview(); };
 ['#act', '#val', '#rnd'].forEach(s => $(s).addEventListener('input', preview));
 
 $('#list').addEventListener('change', e => {
