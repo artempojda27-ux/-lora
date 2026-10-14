@@ -159,8 +159,10 @@ header.menu{z-index:95;background:transparent!important;
 .hero-in{align-self:center;padding:90px 6vw 60px 9vw;max-width:720px;position:relative;z-index:2;
   will-change:opacity,transform;animation:rise 1.4s var(--ease) both}
 @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
-.hero-bg{position:relative;overflow:hidden;margin:84px 24px 24px 0;border-radius:28px}
-.hero-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 60%;
+/* фото на всю висоту праворуч, без рамки; лівий край м'яко розчиняється у фоні */
+.hero-bg{position:absolute;top:0;right:0;bottom:0;width:58%;overflow:hidden;z-index:1;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 26%);mask-image:linear-gradient(90deg,transparent 0,#000 26%)}
+.hero-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 62%;
   animation:drift 26s ease-in-out infinite alternate}
 @keyframes drift{from{transform:scale(1.02)}to{transform:scale(1.09) translateY(-1%)}}
 .vside{position:absolute;bottom:40px;font-size:10px;letter-spacing:.38em;text-transform:uppercase;
@@ -187,12 +189,23 @@ header.menu{z-index:95;background:transparent!important;
 .link:hover{text-decoration:underline}
 .scroll{display:none}
 @media(max-width:900px){
-  .hero{grid-template-columns:1fr;height:auto;min-height:0;max-height:none}
-  .hero-bg{order:-1;margin:74px 16px 0;border-radius:22px;aspect-ratio:4/5;max-height:72svh}
-  .hero-in{padding:34px 22px 56px;text-align:center;margin:0 auto}
+  /* мобільна: фото на весь перший екран, текст поверх — зверху назва, внизу кнопки, туфлі лишаються видно */
+  .hero{display:flex;flex-direction:column;justify-content:space-between;height:100svh;min-height:600px;max-height:none}
+  .hero-bg{width:auto;left:0;-webkit-mask-image:none;mask-image:none}
+  .hero-bg img{object-position:50% 70%}
+  .hero-bg::after{content:'';position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(180deg,rgba(16,17,19,.72) 0,rgba(16,17,19,.38) 34%,transparent 52%,transparent 74%,rgba(16,17,19,.6) 100%)}
+  .hero-in{display:contents}
+  .hero-top{position:relative;z-index:2;padding:92px 22px 0;text-align:center;animation:rise 1.4s var(--ease) both}
   .crest{display:none}
-  .hero-in p{margin:0 auto 28px}
-  .ctas{justify-content:center}
+  .hero-in .wordmark{color:#fff;font-size:52px;margin-bottom:10px}
+  .hero-in .tagline{color:rgba(255,255,255,.86);margin-bottom:18px}
+  .hero-in h1{color:#fff;font-size:28px;margin:0}
+  .hero-in h1 em{color:#fff}
+  .hero-in p{display:none}
+  .ctas{position:relative;z-index:2;justify-content:center;padding:0 22px max(34px,env(safe-area-inset-bottom))}
+  .hero .cta{background:#fff;color:var(--ink)}
+  .hero .link{color:#fff}
   .vside{display:none}
 }
 
@@ -666,10 +679,12 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
 
 <section class="hero">
   <div class="hero-in">
+    <div class="hero-top">
     <div class="crest"><img id="mono" src="assets/mono.png" alt="" width="56"></div>
     <div class="wordmark">ÉLORA</div>
     <div class="tagline">Maison of leather · Kyiv</div>
     <h1>Шкіра, яку обирають <em>на роки</em></h1>
+    </div>
     <p>Взуття, сумки й аксесуари з натуральної шкіри та замші. Усе в наявності й готове до відправлення.</p>
     <div class="ctas">
       <a class="cta" href="#catalog">Дивитися колекцію</a>
