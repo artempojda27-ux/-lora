@@ -232,6 +232,9 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .toast.err{background:rgba(179,38,30,.94)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.nokey{max-width:1200px;margin:14px auto 0;padding:14px 18px;border-radius:14px;background:#F6E9E9;color:#7A2424;
+  font-size:14px;line-height:1.45;border:1px solid #E8CFCF}
+.nokey code{font-size:12.5px}
 </style>
 </head>
 <body>
@@ -251,6 +254,8 @@ header{position:sticky;top:0;z-index:30;background:rgba(231,232,233,.7);
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   <a class="btn sec hide-m" href="./" target="_blank" rel="noopener">Вітрина ↗</a>
 </div></header>
+<div class="nokey" id="nokey" hidden>Ціни зараз <b>не зберігаються на сайт</b>: адмінку відкрито без вашого особистого посилання.
+  Відкрийте її за посиланням, яке надіслав Claude (воно закінчується на <code>#k=…</code>) — один раз, далі браузер його запам'ятає.</div>
 
 <main class="wrap" id="viewOrders" hidden>
   <section class="top">
@@ -527,7 +532,11 @@ function stats(){
   $('#dock').classList.toggle('on', n > 0);
   $('#dockTxt').textContent = `Незбережено: ${n} ${plural(n, 'ціна', 'ціни', 'цін')}`;
   $('#undo').disabled = !history.length;
+  if(KEY && n > 0) autosave();
 }
+/* автозбереження: з особистим посиланням кожна зміна сама йде на сайт через 2 с — кнопку можна не натискати */
+let asT = null, saving = false;
+function autosave(){ clearTimeout(asT); asT = setTimeout(() => saving ? autosave() : save(), 2000); }
 function plural(n, a, b, c){ const m = n % 10, h = n % 100;
   return m === 1 && h !== 11 ? a : m >= 2 && m <= 4 && (h < 10 || h >= 20) ? b : c; }
 function preview(){
@@ -657,7 +666,7 @@ const KEY_LS = 'elora-admin-key';
 let KEY = '';
 try{
   const m = location.hash.match(/k=([\w-]{16,})/);
-  if(m){ localStorage.setItem(KEY_LS, m[1]); history.replaceState(null, '', location.pathname); }
+  if(m){ localStorage.setItem(KEY_LS, m[1]); window.history.replaceState(null, '', location.pathname); }
   KEY = localStorage.getItem(KEY_LS) || '';
 }catch(e){}
 const adminApi = async body => {
@@ -697,18 +706,22 @@ function pricesObj(){
 }
 function markSaved(){
   ITEMS.forEach(x => { if(isEdited(x)){ const v = cur.get(x.id); SAVED[x.id] = {p:v.p, o:v.o ?? null}; } else delete SAVED[x.id]; });
-  savedSnap = snapshot(); draw();
+  savedSnap = snapshot();
+  $('#list').contains(document.activeElement) ? stats() : draw();   // не перемальовувати таблицю, поки друкують ціну
 }
 async function save(){
   const c = cfg();
   if(KEY){
+    clearTimeout(asT); saving = true;
     const btn = $('#save'); btn.disabled = true; btn.textContent = 'Збереження…';
-    try{ await adminApi({action:'prices', prices:pricesObj()}); markSaved(); toast('Збережено. Сайт оновиться за 1–2 хвилини'); }
+    const sent = snapshot();
+    try{ await adminApi({action:'prices', prices:pricesObj()});
+      if(snapshot() === sent){ markSaved(); toast('Збережено. Ціни на сайті оновляться за 1–2 хвилини'); } }
     catch(e){ toast(e.message, true); }
-    finally{ btn.disabled = false; btn.textContent = 'Зберегти на сайт'; }
+    finally{ saving = false; btn.disabled = false; btn.textContent = 'Зберегти на сайт'; }
     return;
   }
-  if(!c.token){ pendingSave = true; openModal(); return toast('Додайте GitHub токен'); }
+  if(!c.token){ $('#nokey').hidden = false; scrollTo({top:0, behavior:'smooth'}); return toast('Відкрийте адмінку за вашим особистим посиланням', true); }
   const btn = $('#save'); btn.disabled = true; btn.textContent = 'Збереження…';
   const api = `https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${c.path.split('/').map(encodeURIComponent).join('/')}`;
   const H = {Authorization:`Bearer ${c.token}`, Accept:'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28'};
@@ -936,6 +949,7 @@ let tt;
 function toast(msg, err){ const t = $('#toast'); t.textContent = msg; t.classList.toggle('err', !!err); t.classList.add('on');
   clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), err ? 4200 : 2600); }
 
+if(!KEY && !cfg().token) $('#nokey').hidden = false;
 fillCats(); draw();
 </script>
 </body>
