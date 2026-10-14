@@ -14,8 +14,11 @@ async function chatId(req) {
   }
 }
 
-/* адмін = власник GitHub-токена з правом запису в репозиторій сайту */
+/* адмін = секретний ключ із посилання на адмінку (ADMIN_KEY у Vercel)
+   або власник GitHub-токена з правом запису в репозиторій сайту */
 async function isAdmin(req) {
+  const k = String(req.headers['x-admin-key'] || ''), want = process.env.ADMIN_KEY || '';
+  if (want && k.length === want.length && require('crypto').timingSafeEqual(Buffer.from(k), Buffer.from(want))) return true;
   const auth = req.headers.authorization || '';
   const repo = process.env.ELORA_REPO || 'artempojda27-ux/-lora';
   if (!/^Bearer \S{20,}$/.test(auth)) return false;

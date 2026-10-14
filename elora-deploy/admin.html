@@ -641,6 +641,22 @@ $('#download').onclick = () => {
   toast('prices.js завантажено — покладіть його в папку data/');
 };
 
+/* секретне посилання адмінки: /admin#k=КЛЮЧ — ключ запам'ятовується в браузері, з адреси прибирається.
+   З ключем усі дії йдуть через сервер (/api/admin), GitHub-токен у браузері не потрібен. */
+const KEY_LS = 'elora-admin-key';
+let KEY = '';
+try{
+  const m = location.hash.match(/k=([\w-]{16,})/);
+  if(m){ localStorage.setItem(KEY_LS, m[1]); history.replaceState(null, '', location.pathname); }
+  KEY = localStorage.getItem(KEY_LS) || '';
+}catch(e){}
+const adminApi = async body => {
+  const r = await fetch('/api/admin', {method:'POST', headers:{'Content-Type':'application/json', 'X-Admin-Key':KEY}, body:JSON.stringify(body)});
+  const j = await r.json().catch(() => ({}));
+  if(r.status === 401) throw new Error('Посилання на адмінку застаріло — відкрийте його заново');
+  if(!r.ok || !j.ok) throw new Error(j.error === 'no_write_token' ? 'На сервері не налаштовано запис (GH_WRITE_TOKEN)' : `Не вдалося зберегти (${j.status || r.status})`);
+  return j;
+};
 const CFG_KEY = 'elora-admin-gh';
 const DEF = {owner:'artempojda27-ux', repo:'-lora', branch:'main', path:'elora-deploy/data/prices.js', token:''};
 function cfg(){ try{ return {...DEF, ...JSON.parse(localStorage.getItem(CFG_KEY) || '{}')}; }catch(e){ return {...DEF}; } }
@@ -664,8 +680,24 @@ $('#mSave').onclick = () => {
 let pendingSave = false;
 const b64 = s => { const bytes = new TextEncoder().encode(s); let bin = '';
   for(let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(bin); };
+function pricesObj(){
+  const out = {};
+  ITEMS.forEach(x => { if(isEdited(x)){ const c = cur.get(x.id); out[x.id] = {p: c.p, o: c.o ?? null}; } });
+  return out;
+}
+function markSaved(){
+  ITEMS.forEach(x => { if(isEdited(x)){ const v = cur.get(x.id); SAVED[x.id] = {p:v.p, o:v.o ?? null}; } else delete SAVED[x.id]; });
+  savedSnap = snapshot(); draw();
+}
 async function save(){
   const c = cfg();
+  if(KEY){
+    const btn = $('#save'); btn.disabled = true; btn.textContent = 'Збереження…';
+    try{ await adminApi({action:'prices', prices:pricesObj()}); markSaved(); toast('Збережено. Сайт оновиться за 1–2 хвилини'); }
+    catch(e){ toast(e.message, true); }
+    finally{ btn.disabled = false; btn.textContent = 'Зберегти на сайт'; }
+    return;
+  }
   if(!c.token){ pendingSave = true; openModal(); return toast('Додайте GitHub токен'); }
   const btn = $('#save'); btn.disabled = true; btn.textContent = 'Збереження…';
   const api = `https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${c.path.split('/').map(encodeURIComponent).join('/')}`;
@@ -707,14 +739,14 @@ const ACTIVE = ['new', 'confirmed', 'supplier', 'shipped'];
 const ordApi = async (body) => {
   const c = cfg();
   const r = await fetch('/api/orders', {method: body ? 'POST' : 'GET', body: body ? JSON.stringify(body) : undefined,
-    headers: {Authorization: `Bearer ${c.token}`, 'Content-Type': 'application/json'}, cache: 'no-store'});
+    headers: {...(KEY ? {'X-Admin-Key': KEY} : {Authorization: `Bearer ${c.token}`}), 'Content-Type': 'application/json'}, cache: 'no-store'});
   const j = await r.json().catch(() => ({}));
-  if(r.status === 401) throw new Error('GitHub токен не підходить — перевірте ⚙');
+  if(r.status === 401) throw new Error(KEY ? 'Посилання на адмінку застаріло — відкрийте його заново' : 'GitHub токен не підходить — перевірте ⚙');
   if(!r.ok || !j.ok) throw new Error(j.error === 'storage' ? 'Сховище замовлень недоступне' : (j.error || `Помилка ${r.status}`));
   return j;
 };
 async function loadOrders(){
-  if(!cfg().token){ openModal(); return toast('Спершу додайте GitHub токен'); }
+  if(!KEY && !cfg().token){ openModal(); return toast('Спершу додайте GitHub токен'); }
   $('#olist').innerHTML = '<div class="oempty">Завантаження…</div>';
   try{
     const j = await ordApi();
@@ -809,16 +841,16 @@ segHandler('#views', v => {
 const tgApi = async (q, body) => {
   const c = cfg();
   const r = await fetch('/api/tg' + (body ? '' : '?' + new URLSearchParams(q)), {method: body ? 'POST' : 'GET',
-    headers: {Authorization: `Bearer ${c.token}`, 'Content-Type': 'application/json'}, body: body ? JSON.stringify(body) : undefined});
+    headers: {...(KEY ? {'X-Admin-Key': KEY} : {Authorization: `Bearer ${c.token}`}), 'Content-Type': 'application/json'}, body: body ? JSON.stringify(body) : undefined});
   const j = await r.json().catch(() => ({}));
-  if(r.status === 401) throw new Error('GitHub токен не підходить — перевірте ⚙');
+  if(r.status === 401) throw new Error(KEY ? 'Посилання на адмінку застаріло — відкрийте його заново' : 'GitHub токен не підходить — перевірте ⚙');
   if(r.status === 404) throw new Error('Функція /api/tg ще не задеплоєна');
   if(!r.ok || !j.ok) throw new Error(j.error === 'no_token' ? 'У Vercel ще немає TELEGRAM_BOT_TOKEN' : (j.error || r.status));
   return j;
 };
 let tgPicked = null;
 async function openTg(){
-  if(!cfg().token){ openModal(); return toast('Спершу додайте GitHub токен'); }
+  if(!KEY && !cfg().token){ openModal(); return toast('Спершу додайте GitHub токен'); }
   $('#tgModal').classList.add('on'); $('#scrim').classList.add('on');
   $('#tgChats').innerHTML = ''; tgPicked = null; $('#tgSave').disabled = true; $('#tgTest').disabled = true;
   $('#tgStatus').textContent = 'Перевіряємо…';
@@ -847,6 +879,11 @@ $('#tgTest').onclick = async () => {
 };
 $('#tgSave').onclick = async () => {
   if(!tgPicked) return;
+  if(KEY){
+    try{ await adminApi({action:'telegram', chat_id:tgPicked}); toast('Збережено. Через 1–2 хв замовлення підуть у цей чат'); }
+    catch(e){ toast(e.message, true); }
+    return;
+  }
   const c = cfg(), path = c.path.replace(/data\/prices\.js$/, 'config/telegram.json');
   const api = `https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${path.split('/').map(encodeURIComponent).join('/')}`;
   const H = {Authorization:`Bearer ${c.token}`, Accept:'application/vnd.github+json'};
@@ -864,9 +901,15 @@ $('#tgSave').onclick = async () => {
 /* кнопка «Оновити каталог»: запускає GitHub Actions workflow .github/workflows/catalog.yml */
 $('#syncBtn').onclick = async () => {
   const c = cfg();
-  if(!c.token){ openModal(); return toast('Додайте GitHub токен'); }
-  if(!confirm('Завантажити свіжі каталоги TAPULI та 4cases? Це займе 10–30 хвилин, після чого сайт оновиться сам.')) return;
+  if(!KEY && !c.token){ openModal(); return toast('Додайте GitHub токен'); }
+  if(!confirm('Завантажити свіжі каталоги постачальників? Це займе 10–30 хвилин, після чого сайт оновиться сам.')) return;
   const btn = $('#syncBtn'); btn.disabled = true;
+  if(KEY){
+    try{ await adminApi({action:'sync'}); toast('Оновлення запущено — сайт оновиться за 10–30 хв'); }
+    catch(e){ toast(e.message, true); }
+    finally{ setTimeout(() => btn.disabled = false, 4000); }
+    return;
+  }
   try{
     const r = await fetch(`https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/actions/workflows/catalog.yml/dispatches`, {
       method:'POST', body:JSON.stringify({ref:c.branch}),
