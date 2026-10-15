@@ -85,6 +85,15 @@ module.exports = async (req, res) => {
     c.note ? `📝 ${esc(c.note)}` : null,
   ].filter(l => l !== null).join('\n');
 
+  /* під замовленням — по дві кнопки на кожен товар: картка на нашому сайті і той самий товар у постачальника */
+  const keyboard = items.map((i, n) => {
+    const x = info(i), sp = sup && sup[x.s], label = items.length > 1 ? `${n + 1}. ` : '';
+    return [
+      {text: `🛍 ${label}Наш сайт`, url: `https://${host}/#p=${encodeURIComponent(i.id)}`},
+      x.u && {text: `📦 ${label}${sp ? sp.name : x.s || 'Постачальник'}`, url: x.u},
+    ].filter(Boolean);
+  });
+
   /* 2) заявки постачальникам: по одній на кожного — текст копіюється дотиком або пересилається */
   const groups = new Map();
   items.forEach(i => { const s = info(i).s || 'other'; groups.set(s, [...(groups.get(s) || []), i]); });
@@ -118,7 +127,7 @@ module.exports = async (req, res) => {
     body: JSON.stringify({chat_id: chat, parse_mode: 'HTML', disable_web_page_preview: true, ...m}),
   });
   try {
-    const r = await send({text});
+    const r = await send({text, reply_markup: {inline_keyboard: keyboard}});
     if (!r.ok) throw new Error(`telegram ${r.status}`);
     const msg = await r.json().catch(() => ({}));
     for (const m of orders) await send(m).catch(e => console.error('supplier msg', e));
