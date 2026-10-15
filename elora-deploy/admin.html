@@ -56,6 +56,8 @@ h2{font-family:var(--serif);font-weight:500;font-size:28px;margin:40px 0 6px}
 .seg{display:flex;background:var(--surf);border-radius:12px;padding:3px}
 .seg button{flex:1;height:38px;border-radius:9px;font-size:14px;color:var(--dim)}
 .seg button.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.old{font-size:12.5px;color:var(--red);margin-top:8px;line-height:1.4}
+.f .op[data-unit]{width:auto;min-width:16px}
 .ex{font-size:13.5px;color:var(--dim);border-top:1px solid var(--line);padding-top:12px;line-height:1.6}
 .ex b{color:var(--ink)}
 .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
@@ -119,8 +121,8 @@ h2{font-family:var(--serif);font-weight:500;font-size:28px;margin:40px 0 6px}
     Відкрийте посилання, яке надіслав Claude (закінчується на <code>#k=…</code>) — один раз, далі браузер його запам'ятає.</div>
 
   <h1>Ціни</h1>
-  <p class="lead">Ціна на сайті = ціна постачальника × множник + надбавка. Вона рахується сама для всіх товарів,
-    і для нових теж. Для окремого товару можна поставити свою ціну — нижче.</p>
+  <p class="lead">Оберіть для кожного постачальника, скільки додавати до його ціни: <b>відсоток</b> або <b>гривні</b>.
+    Ціни на сайті порахуються самі — і для нових товарів теж. Окремому товару можна поставити свою ціну нижче.</p>
 
   <section class="rules" id="rules"></section>
 
@@ -169,10 +171,25 @@ const SUP = [
 const ITEMS = SUP.flatMap(s => s.list.map(p => ({id:String(p.id), s:s.id, sn:s.name, t:p.t, p0:p.p, o0:p.o ?? null,
   img:(p.img || [])[0], sku:(p.sp && (p.sp.sku || p.sp['Артикул'])) || ''})));
 
-/* стан: наценки і свої ціни; savedJSON — що зараз на сайті */
+/* стан: наценки і свої ціни; savedJSON — що зараз на сайті.
+   Наценка — або +% (m:'pct'), або +₴ (m:'uah'); у файлі зберігається ще й як k/a для pricing.js */
 const DEF_RULE = {k:1, a:0, end:'99'};
 let rules = {}, own = {};
-SUP.forEach(s => rules[s.id] = {...DEF_RULE, ...((typeof RULES !== 'undefined' && RULES[s.id]) || {})});
+const LEGACY = {};
+SUP.forEach(s => {
+  const r = {...DEF_RULE, ...((typeof RULES !== 'undefined' && RULES[s.id]) || {})};
+  if(!r.m){
+    if(!r.a){ r.m = 'pct'; r.v = Math.round((r.k - 1) * 1000) / 10; }
+    else if(r.k === 1){ r.m = 'uah'; r.v = r.a; }
+    else { r.m = 'pct'; r.v = null; LEGACY[s.id] = {k: r.k, a: r.a}; }   // стара складна наценка — доки не впишуть нову
+  }
+  rules[s.id] = r;
+});
+function applyRule(id){
+  const r = rules[id];
+  if(r.v == null){ const L = LEGACY[id] || {k:1, a:0}; r.k = L.k; r.a = L.a; return; }
+  if(r.m === 'uah'){ r.k = 1; r.a = r.v; } else { r.k = 1 + r.v / 100; r.a = 0; }
+}
 own = JSON.parse(JSON.stringify(typeof PRICES !== 'undefined' ? PRICES : {}));
 const state = () => JSON.stringify({rules, own});
 let savedJSON = state();
@@ -184,9 +201,11 @@ function drawRules(){
     const r = rules[s.id];
     return `<div class="rule" data-s="${s.id}">
       <div class="nm"><b>${s.name}</b><small>${s.note} · ${s.list.length}</small></div>
-      <div><div class="lbl" style="margin-bottom:6px">Ціна постачальника</div>
-      <div class="f"><span class="op">×</span><input data-k inputmode="decimal" value="${r.k}" aria-label="Множник">
-        <span class="op">+</span><input data-a inputmode="numeric" value="${r.a}" aria-label="Надбавка, ₴"><span>₴</span></div></div>
+      <div><div class="lbl" style="margin-bottom:6px">До ціни постачальника додати</div>
+      <div class="seg" data-mode style="margin-bottom:8px"><button data-v="pct" class="${r.m === 'pct' ? 'on' : ''}">Відсоток, %</button><button data-v="uah" class="${r.m === 'uah' ? 'on' : ''}">Гривні, ₴</button></div>
+      <div class="f"><span class="op">+</span><input data-amt inputmode="decimal" value="${r.v ?? ''}" placeholder="${LEGACY[s.id] ? 'впишіть' : '0'}" aria-label="Наценка">
+        <span class="op" data-unit>${r.m === 'uah' ? '₴' : '%'}</span></div>
+      ${LEGACY[s.id] && r.v == null ? `<div class="old">Зараз стоїть стара наценка (×${LEGACY[s.id].k} + ${LEGACY[s.id].a} ₴). Впишіть нову — відсоток або гривні.</div>` : ''}</div>
       <div><div class="lbl" style="margin-bottom:6px">Закінчення ціни</div>
       <div class="seg" data-end>${['99','79','0'].map(e => `<button data-v="${e}" class="${r.end === e ? 'on' : ''}">${e === '0' ? 'кругла' : '…' + e}</button>`).join('')}</div></div>
       <div class="ex" data-ex></div>
@@ -205,12 +224,18 @@ function drawExample(id){
 }
 $('#rules').addEventListener('input', e => {
   const card = e.target.closest('.rule'); if(!card) return;
-  const r = rules[card.dataset.s], v = parseFloat(String(e.target.value).replace(',', '.'));
-  if(e.target.hasAttribute('data-k')) r.k = isFinite(v) ? v : r.k;
-  if(e.target.hasAttribute('data-a')) r.a = isFinite(v) ? v : (e.target.value.trim() === '' ? 0 : r.a);
+  const id = card.dataset.s, r = rules[id], v = parseFloat(String(e.target.value).replace(/\s/g, '').replace(',', '.'));
+  if(e.target.hasAttribute('data-amt')){ r.v = isFinite(v) && v >= 0 ? v : null; applyRule(id);
+    const old = card.querySelector('.old'); if(old) old.hidden = r.v != null; }
   drawExample(card.dataset.s); drawList(); status();
 });
 $('#rules').addEventListener('click', e => {
+  const m = e.target.closest('[data-mode] button');
+  if(m){ const card = m.closest('.rule'), id = card.dataset.s; rules[id].m = m.dataset.v; applyRule(id);
+    card.querySelectorAll('[data-mode] button').forEach(x => x.classList.toggle('on', x === m));
+    card.querySelector('[data-unit]').textContent = m.dataset.v === 'uah' ? '₴' : '%';
+    card.querySelector('[data-amt]').focus();
+    drawExample(id); drawList(); status(); return; }
   const b = e.target.closest('[data-end] button'); if(!b) return;
   const card = b.closest('.rule'); rules[card.dataset.s].end = b.dataset.v;
   card.querySelectorAll('[data-end] button').forEach(x => x.classList.toggle('on', x === b));
@@ -270,12 +295,14 @@ let saving = false;
 $('#save').onclick = async () => {
   if(!KEY){ $('#nokey').hidden = false; scrollTo({top:0, behavior:'smooth'}); return toast('Відкрийте адмінку за особистим посиланням', true); }
   for(const s of SUP){ const r = rules[s.id];
-    if(!(r.k >= 0.5 && r.k <= 20)) return toast(`${s.name}: множник має бути від 0,5 до 20`, true); }
+    if(r.m === 'pct' && r.v != null && r.v > 1000) return toast(`${s.name}: відсоток завеликий (до 1000%)`, true);
+    if(r.m === 'uah' && r.v != null && r.v > 100000) return toast(`${s.name}: забагато гривень (до 100 000)`, true); }
   saving = true; status();
   const sent = state();
   try{
     const r = await fetch('/api/admin', {method:'POST', headers:{'Content-Type':'application/json', 'X-Admin-Key':KEY},
-      body: JSON.stringify({action:'prices', rules, prices: own})});
+      body: JSON.stringify({action:'prices', prices: own,
+        rules: Object.fromEntries(Object.entries(rules).map(([id, r]) => [id, r.v == null ? {k: r.k, a: r.a, end: r.end} : r]))})});
     const j = await r.json().catch(() => ({}));
     if(r.status === 401) throw new Error('Посилання застаріло — відкрийте адмінку за новим посиланням');
     if(!r.ok || !j.ok) throw new Error(`Не вдалося зберегти (${j.error || r.status}). Спробуйте ще раз`);
