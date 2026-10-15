@@ -18,6 +18,7 @@
   }
   function byRule(v, r){
     if(v == null || !r) return v;
+    if((Number(r.k) || 1) === 1 && !Number(r.a)) return v;     // ×1 + 0 — наценки немає, ціна постачальника як є
     return end(v * (Number(r.k) || 1) + (Number(r.a) || 0), r.end);
   }
   /* ціна товару на сайті: {p, o, how: 'own' | 'rule' | 'feed'} */
