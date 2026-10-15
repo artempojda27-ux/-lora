@@ -789,6 +789,7 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
 <script src="data/4cases.js" onerror="void 0"></script>
 <script src="data/podium.js" onerror="void 0"></script>
 <script src="data/prices.js" onerror="void 0"></script>
+<script src="pricing.js"></script>
 <script src="ambient.js" defer></script>
 <script>
 const ASSETS = {hero:'assets/hero.jpg', mono:'assets/mono.png'};
@@ -831,12 +832,8 @@ if(typeof DATA_PD !== 'undefined'){
     ex ? ex.n += c.n : CATS.push({...c, d:'leather'});
   });
 }
-/* ручні ціни з адмін-панелі (admin.html -> data/prices.js): {id: {p, o}} поверх фідів */
-if(typeof PRICES !== 'undefined') DATA.forEach(p => {
-  const x = PRICES[p.id]; if(!x) return;
-  if(x.p != null) p.p = x.p;
-  if('o' in x) p.o = x.o;
-});
+/* ціни з адмінки (data/prices.js через pricing.js): наценка постачальника або своя ціна товару */
+if(window.ELORA_PRICE) DATA.forEach(p => { const r = ELORA_PRICE.price(String(p.id), p.s, p.p, p.o); p.p = r.p; p.o = r.o; });
 /* підпис плитки «Взуття» — чотири найбільші категорії поточного фіду */
 DEPTS[0].note = CATS.filter(c => c.d === 'shoes').slice(0, 4).map(c => c.name.toLowerCase())
   .join(', ').replace(/^./, ch => ch.toUpperCase());
