@@ -94,10 +94,11 @@ module.exports = async (req, res) => {
     ].filter(Boolean);
   });
 
-  /* 2) заявки постачальникам: по одній на кожного — текст копіюється дотиком або пересилається */
+  /* 2) заявки постачальникам — у тому ж повідомленні: текст у блоці копіюється одним дотиком */
   const groups = new Map();
   items.forEach(i => { const s = info(i).s || 'other'; groups.set(s, [...(groups.get(s) || []), i]); });
-  const orders = [...groups].map(([s, list]) => {
+  const contactRow = [];
+  const parts = [...groups].map(([s, list]) => {
     const sp = (sup && sup[s]) || {name: s};
     const sum = list.reduce((a, i) => a + i.price, 0);
     const body = [
@@ -109,28 +110,26 @@ module.exports = async (req, res) => {
       `Нова пошта: ${c.city}, ${c.dep}`,
       `Накладений платіж: ${money(sum)}`,
     ].join('\n');
-    const buttons = [
-      sp.telegram && {text: `✉️ Написати ${sp.name}`, url: sp.telegram},
-      sp.instagram && {text: 'Instagram', url: sp.instagram},
-      ...list.map(i => info(i).u).filter(Boolean).slice(0, 3).map((u, n) => ({text: `🔗 Товар ${list.length > 1 ? n + 1 : ''}`.trim(), url: u})),
-    ].filter(Boolean);
-    return {
-      text: [`📦 <b>Заявка для ${esc(sp.name)}</b> · №${id}`,
-        [sp.phone && `📞 ${esc(sp.phone)}`, sp.email && `✉️ ${esc(sp.email)}`].filter(Boolean).join(' · ') || null,
-        '', `<pre>${esc(body)}</pre>`].filter(l => l !== null).join('\n'),
-      reply_markup: buttons.length ? {inline_keyboard: [buttons.slice(0, 2), buttons.slice(2)].filter(r => r.length)} : undefined,
-    };
+    if (sp.telegram) contactRow.push({text: `✉️ Написати ${sp.name}`, url: sp.telegram});
+    return [`📦 <b>Заявка для ${esc(sp.name)}</b>` +
+      ([sp.phone && ` · 📞 ${esc(sp.phone)}`, sp.email && ` · ${esc(sp.email)}`].filter(Boolean).join('')),
+      `<pre>${esc(body)}</pre>`].join('\n');
   });
+  const buttons = {inline_keyboard: [...keyboard, ...(contactRow.length ? [contactRow.slice(0, 3)] : [])]};
+  /* одне повідомлення; лише якщо замовлення завелике для Telegram (4096 символів) — заявки окремо */
+  const full = [text, '', '— — —', '', ...parts.flatMap(x => [x, ''])].join('\n').trim();
+  const messages = full.length <= 4000 ? [{text: full, reply_markup: buttons}]
+    : [{text, reply_markup: buttons}, ...parts.map(x => ({text: x}))];
 
   const send = m => fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST', headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({chat_id: chat, parse_mode: 'HTML', disable_web_page_preview: true, ...m}),
   });
   try {
-    const r = await send({text, reply_markup: {inline_keyboard: keyboard}});
+    const r = await send(messages[0]);
     if (!r.ok) throw new Error(`telegram ${r.status}`);
     const msg = await r.json().catch(() => ({}));
-    for (const m of orders) await send(m).catch(e => console.error('supplier msg', e));
+    for (const m of messages.slice(1)) await send(m).catch(e => console.error('supplier msg', e));
     /* журнал замовлень в адмінці (зашифровано); помилка журналу не ламає замовлення */
     await journal.add({
       id, at: new Date().toISOString(), status: 'new', total,
