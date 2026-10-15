@@ -530,6 +530,15 @@ header.menu{z-index:95;background:transparent!important;
 .via button:hover{border-color:var(--ink)}
 .via button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .form input:disabled{opacity:.55}
+/* підказки Нової пошти: список під полем, не перекриває форму */
+.sug{display:none;max-height:244px;overflow-y:auto;border:1px solid var(--rule);border-radius:12px;background:var(--surf);margin-top:-4px}
+.sug.on{display:block}
+.sug button{display:block;width:100%;text-align:left;padding:11px 14px;font-size:14px;line-height:1.35;color:var(--ink);border-top:1px solid var(--rule)}
+.sug button:first-child{border-top:none}
+.sug button:hover,.sug button:focus{background:#fff;outline:none}
+.sug button small{display:block;color:var(--faint);font-size:12px}
+.sug .none{padding:11px 14px;font-size:13px;color:var(--dim)}
+.form input.picked{border-color:var(--ink)}
 .form .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 body .toast{white-space:normal;text-align:center;width:max-content;max-width:calc(100vw - 32px);border-radius:20px}
 .done{text-align:center;padding:60px 24px}
@@ -1194,8 +1203,10 @@ function renderCart(done){
     <div class="form">
       <input id="fName" placeholder="Ім'я та прізвище" autocomplete="name">
       <input id="fPhone" placeholder="+38 (0__) ___ __ __" inputmode="tel" autocomplete="tel">
-      <input id="fCity" placeholder="Місто" autocomplete="address-level2">
-      <input id="fDep" placeholder="Відділення Нової пошти">
+      <input id="fCity" placeholder="Місто" autocomplete="off" role="combobox" aria-controls="sCity" aria-autocomplete="list">
+      <div class="sug" id="sCity" role="listbox"></div>
+      <input id="fDep" placeholder="Відділення: номер або вулиця" autocomplete="off" role="combobox" aria-controls="sDep" aria-autocomplete="list">
+      <div class="sug" id="sDep" role="listbox"></div>
       <div class="via-l">Де вам зручніше спілкуватися?</div>
       <div class="via" id="via" role="radiogroup" aria-label="Месенджер">
         <button type="button" role="radio" data-via="telegram" aria-checked="false">Telegram</button>
@@ -1209,7 +1220,53 @@ function renderCart(done){
     <button class="add" id="checkout">Оформити замовлення</button>`;
   kept.forEach(([id, v]) => { const el = $('#' + id); if(el) el.value = v; });
   if(keptVia) selectVia(keptVia, false);
+  if(NP.city) $('#fCity').classList.add('picked');
+  if(NP.dep) $('#fDep').classList.add('picked');
 }
+
+/* Нова пошта: місто і відділення обираються зі списку НП (/api/np), щоб адреса для ТТН була точна.
+   Якщо довідник НП недоступний — поля працюють як звичайний текст. */
+var NP = {city: null, dep: null, down: false};   // var: renderCart може викликатися раніше
+let npT, npSeq = 0;
+async function npGet(qs){
+  const r = await fetch('/api/np?' + new URLSearchParams(qs));
+  const j = await r.json();
+  if(!r.ok || !j.ok) throw new Error('np');
+  NP.down = false; return j.list;
+}
+function npShow(box, html){ const b = $(box); b.innerHTML = html; b.classList.toggle('on', !!html); }
+function npCity(q){
+  const seq = ++npSeq;
+  if(q.length < 2) return npShow('#sCity', '');
+  npGet({city: q}).then(list => { if(seq !== npSeq) return;
+    npShow('#sCity', list.length ? list.map(c => `<button type="button" role="option" data-ref="${c.ref}" data-name="${c.name.replace(/"/g, '&quot;')}">
+      ${c.name.split(',')[0]}<small>${c.name.split(',').slice(1).join(',').trim()}</small></button>`).join('')
+      : '<div class="none">Не знайшли таке місто — перевірте назву</div>');
+  }).catch(() => { NP.down = true; npShow('#sCity', ''); });
+}
+function npDep(q){
+  if(!NP.city) return npShow('#sDep', '<div class="none">Спершу оберіть місто зі списку</div>');
+  const seq = ++npSeq;
+  npGet({wh: NP.city.ref, q}).then(list => { if(seq !== npSeq) return;
+    npShow('#sDep', list.length ? list.map(w => `<button type="button" role="option" data-name="${w.name.replace(/"/g, '&quot;')}">${w.name}</button>`).join('')
+      : '<div class="none">Нічого не знайшли — спробуйте номер відділення</div>');
+  }).catch(() => { NP.down = true; npShow('#sDep', ''); });
+}
+$('#cart').addEventListener('input', e => {
+  if(e.target.id === 'fCity'){ NP.city = null; NP.dep = null; e.target.classList.remove('picked'); $('#fDep').classList.remove('picked');
+    clearTimeout(npT); npT = setTimeout(() => npCity(e.target.value.trim()), 220); }
+  if(e.target.id === 'fDep'){ NP.dep = null; e.target.classList.remove('picked');
+    clearTimeout(npT); npT = setTimeout(() => npDep(e.target.value.trim()), 220); }
+});
+$('#cart').addEventListener('focusin', e => { if(e.target.id === 'fDep' && !NP.dep) npDep(e.target.value.trim()); });
+$('#cart').addEventListener('click', e => {
+  const c = e.target.closest('#sCity [data-ref]');
+  if(c){ NP.city = {ref: c.dataset.ref, name: c.dataset.name}; NP.dep = null;
+    $('#fCity').value = c.dataset.name; $('#fCity').classList.add('picked');
+    $('#fDep').value = ''; $('#fDep').classList.remove('picked'); npShow('#sCity', ''); $('#fDep').focus(); return; }
+  const d = e.target.closest('#sDep [data-name]');
+  if(d){ NP.dep = d.dataset.name; $('#fDep').value = d.dataset.name; $('#fDep').classList.add('picked'); npShow('#sDep', ''); }
+});
 
 $('#cart').addEventListener('click', e=>{
   const rm = e.target.closest('[data-rm]');
@@ -1236,6 +1293,8 @@ async function checkout(btn){
   const v = id => $('#' + id).value.trim();
   const need = ['fName','fPhone','fCity','fDep'].filter(id => !v(id));
   if(need.length){ toast('Заповніть контактні дані'); $('#'+need[0]).focus(); return; }
+  if(!NP.down && !NP.city){ toast('Оберіть місто зі списку Нової пошти'); $('#fCity').focus(); npCity(v('fCity')); return; }
+  if(!NP.down && !NP.dep){ toast('Оберіть відділення зі списку'); $('#fDep').focus(); return; }
   const digits = v('fPhone').replace(/\D/g, '');
   if(digits.length < 10 || digits.length > 13){ toast('Перевірте номер телефону'); $('#fPhone').focus(); return; }
   const via = $('#fVia').dataset.via;
