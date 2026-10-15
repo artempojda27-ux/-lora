@@ -35,6 +35,10 @@ module.exports = async (req, res) => {
       const k = Number(r.k), a = Number(r.a) || 0, end = ['99', '79', '0'].includes(String(r.end)) ? String(r.end) : '0';
       if (!(k >= 0.5 && k <= 20) || !(a >= -100000 && a <= 100000)) return res.status(400).json({ok: false, error: 'rules'});
       rules[s] = {k, a, end};
+      if (['pct', 'uah'].includes(r.m)) {               // як наценку показувати в адмінці: +% або +₴
+        rules[s].m = r.m;
+        rules[s].v = r.v != null && isFinite(Number(r.v)) ? Number(r.v) : null;
+      }
     }
     const text = '/* ÉLORA — ціни з admin.html (рахує pricing.js).\n' +
       '   RULES — наценка постачальника: ціна постачальника × k + a, закінчення end (…99, …79 або до 10 ₴).\n' +
