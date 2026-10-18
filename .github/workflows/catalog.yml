@@ -101,7 +101,9 @@ jobs:
             -m "$(git diff --cached --stat -- data | tail -1)"
           git push origin HEAD:main
           # нагадування в Telegram: що закінчується в постачальників і що зникло (до деплою нової версії)
-          curl -sS -m 60 -X POST https://lora-zeta.vercel.app/api/stock-alerts || true
+          # основний домен — elora-shoes.com; якщо він недоступний, той самий сайт на lora-zeta.vercel.app
+          curl -sSf -m 60 -X POST https://elora-shoes.com/api/stock-alerts \
+            || curl -sS -m 60 -X POST https://lora-zeta.vercel.app/api/stock-alerts || true
 
       - name: Підсумок
         if: always()

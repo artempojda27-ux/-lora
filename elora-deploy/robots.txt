@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://elora.ua/sitemap.xml
+Sitemap: https://elora-shoes.com/sitemap.xml
