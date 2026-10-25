@@ -23,7 +23,8 @@ async function cached(key, ttl, fn) {
   return v;
 }
 
-const SOURCES = [['data/catalog.js', 'DATA', 'tapuli'], ['data/4cases.js', 'DATA_4C', '4cases'], ['data/podium.js', 'DATA_PD', 'podium']];
+const SOURCES = [['data/catalog.js', 'DATA', 'tapuli'], ['data/4cases.js', 'DATA_4C', '4cases'], ['data/podium.js', 'DATA_PD', 'podium'],
+                 ['data/tg.js', 'DATA_TG', 'tg']];
 
 /* id -> {s, u, t} */
 const products = host => cached('products', 30 * 60e3, async () => {
@@ -34,7 +35,8 @@ const products = host => cached('products', 30 * 60e3, async () => {
     if (!m) return;
     for (const p of JSON.parse(m[1])) {
       const u = p.u || (s === '4cases' ? `https://4cases.com.ua/products/${p.id.slice(3)}` : null);
-      map.set(String(p.id), {s, u, t: p.t});
+      // Telegram: заявка — каналу-постачальнику, артикул — код із поста
+      map.set(String(p.id), s === 'tg' ? {s: `tg:${p.ch}`, u, t: p.t, a: p.code || null} : {s, u, t: p.t});
     }
   }));
   return map.size ? map : null;
@@ -46,6 +48,7 @@ const suppliers = host => cached('suppliers', 10 * 60e3, async () => {
 });
 
 /* постачальник за форматом id, якщо каталог недоступний */
-const supplierOf = id => /^\d+$/.test(id) ? 'tapuli' : id.startsWith('4c-') ? '4cases' : id.startsWith('pd-') ? 'podium' : null;
+const supplierOf = id => /^\d+$/.test(id) ? 'tapuli' : id.startsWith('4c-') ? '4cases' : id.startsWith('pd-') ? 'podium'
+  : id.startsWith('tg-') ? `tg:${id.split('-')[1]}` : null;
 
 module.exports = {products, suppliers, supplierOf};

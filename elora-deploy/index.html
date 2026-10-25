@@ -797,6 +797,7 @@ footer{border-top:1px solid var(--rule2);padding:56px 0 44px;background:var(--sa
 <script src="data/catalog.js"></script>
 <script src="data/4cases.js" onerror="void 0"></script>
 <script src="data/podium.js" onerror="void 0"></script>
+<script src="data/tg.js" onerror="void 0"></script>
 <script src="data/prices.js" onerror="void 0"></script>
 <script src="pricing.js"></script>
 <script src="ambient.js" defer></script>
@@ -839,6 +840,14 @@ if(typeof DATA_PD !== 'undefined'){
   CATS_PD.forEach(c => {
     const ex = CATS.find(x => x.name === c.name && x.d === 'leather');
     ex ? ex.n += c.n : CATS.push({...c, d:'leather'});
+  });
+}
+/* Telegram-канали постачальників (data/tg.js з import_tg.py): взуття й сумки, категорії зливаються з наявними */
+if(typeof DATA_TG !== 'undefined'){
+  DATA_TG.forEach(p => { p.s = 'tg'; p.sz = p.sz || []; p.sp = p.sp || {}; DATA.push(p); });
+  CATS_TG.forEach(c => {
+    const ex = CATS.find(x => x.name === c.name && x.d === c.d);
+    ex ? ex.n += c.n : CATS.push({...c});
   });
 }
 /* ціни з адмінки (data/prices.js через pricing.js): наценка постачальника або своя ціна товару */

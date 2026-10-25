@@ -60,6 +60,8 @@ module.exports = async (req, res) => {
     check(items, host).catch(() => new Map()), products(host).catch(() => null), suppliers(host).catch(() => null)]);
   const st = i => MARK[String(stock.has(`${i.id}|${i.size}`) ? stock.get(`${i.id}|${i.size}`) : null)];
   const info = i => (cat && cat.get(i.id)) || {s: supplierOf(i.id), u: null};
+  /* артикул для постачальника: код із поста (Telegram) або id без префікса */
+  const art = i => i.id.startsWith('tg-') ? (info(i).a || '') : i.id.replace(/^(4c|pd)-/, '');
   const sizeTxt = i => i.size && i.size !== 'one size' ? `розмір ${i.size}` : '';
   const total = items.reduce((s, i) => s + i.price, 0);
   const tel = `+${digits.length === 10 ? '38' + digits : digits}`;
@@ -73,7 +75,7 @@ module.exports = async (req, res) => {
       return `${n + 1}. ${st(i)} <a href="https://${host}/#p=${encodeURIComponent(i.id)}">${esc(i.t)}</a>` +
         `${i.col ? ` · ${esc(i.col)}` : ''}${sizeTxt(i) ? ` · <b>${esc(sizeTxt(i))}</b>` : ''} — ${money(i.price)}` +
         `\n    ↳ ${x.u ? `<a href="${esc(x.u)}">${esc(sp ? sp.name : x.s || 'постачальник')}</a>` : esc(sp ? sp.name : x.s || '—')}` +
-        ` · арт. <code>${esc(i.id.replace(/^(4c|pd)-/, ''))}</code>`;
+        ` · арт. <code>${esc(art(i))}</code>`;
     }),
     '',
     `<b>Разом: ${money(total)}</b>`,
@@ -103,7 +105,7 @@ module.exports = async (req, res) => {
     const sum = list.reduce((a, i) => a + i.price, 0);
     const body = [
       `Дропшипінг, замовлення ${id}`,
-      ...list.map((i, n) => `${n + 1}) арт. ${i.id.replace(/^(4c|pd)-/, '')} — ${i.t}` +
+      ...list.map((i, n) => `${n + 1}) ${art(i) ? `арт. ${art(i)} — ` : ''}${i.t}` +
         `${i.col ? `, ${i.col}` : ''}${sizeTxt(i) ? `, ${sizeTxt(i)}` : ''} — 1 шт.`),
       `Отримувач: ${c.name}`,
       `Телефон: ${c.phone}`,
