@@ -1,0 +1,11 @@
+{
+  "channels": [
+    {"ch": "taran_shoes", "name": "Марина Таран"},
+    {"ch": "topshoeskanal2", "name": "TOP SHOES"},
+    {"ch": "loveshoes_shop", "name": "Loveshoes"},
+    {"ch": "loveshoes_sale", "name": "Loveshoes SALE"},
+    {"ch": "kaif_shoes_store", "name": "Kaif Shoes"},
+    {"ch": "bonam77", "name": "BONA MENTE"}
+  ],
+  "post_to": "@Eloranatashoes"
+}

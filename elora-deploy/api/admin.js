@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
     }
     /* наценка постачальників: ціна постачальника × k + a, закінчення …99 / …79 / до 10 ₴ */
     const rules = {};
-    for (const s of ['tapuli', '4cases', 'podium']) {
+    for (const s of ['tapuli', '4cases', 'podium', 'tg']) {
       const r = b.rules && b.rules[s];
       if (!r) continue;
       const k = Number(r.k), a = Number(r.a) || 0, end = ['99', '79', '0'].includes(String(r.end)) ? String(r.end) : '0';

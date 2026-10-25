@@ -22,5 +22,53 @@
     "telegram": "https://t.me/podiumbagswallets",
     "instagram": "https://www.instagram.com/podium.accessories/",
     "email": "sales@podium.ua"
+  },
+  "tg:taran_shoes": {
+    "name": "Марина Таран (Telegram)",
+    "site": "https://t.me/taran_shoes",
+    "phone": null,
+    "telegram": "https://t.me/taran_shoes",
+    "instagram": null,
+    "email": null
+  },
+  "tg:topshoeskanal2": {
+    "name": "TOP SHOES (Telegram)",
+    "site": "https://t.me/topshoeskanal2",
+    "phone": null,
+    "telegram": "https://t.me/topshoeskanal2",
+    "instagram": null,
+    "email": null
+  },
+  "tg:loveshoes_shop": {
+    "name": "Loveshoes (Telegram)",
+    "site": "https://t.me/loveshoes_shop",
+    "phone": null,
+    "telegram": "https://t.me/loveshoes_drop",
+    "instagram": null,
+    "email": null
+  },
+  "tg:loveshoes_sale": {
+    "name": "Loveshoes SALE (Telegram)",
+    "site": "https://t.me/loveshoes_sale",
+    "phone": null,
+    "telegram": "https://t.me/loveshoes_drop",
+    "instagram": null,
+    "email": null
+  },
+  "tg:kaif_shoes_store": {
+    "name": "Kaif Shoes (Telegram)",
+    "site": "https://t.me/kaif_shoes_store",
+    "phone": null,
+    "telegram": "https://t.me/NastyaShoes",
+    "instagram": null,
+    "email": null
+  },
+  "tg:bonam77": {
+    "name": "BONA MENTE (Telegram)",
+    "site": "https://t.me/bonam77",
+    "phone": null,
+    "telegram": "https://t.me/bonam77",
+    "instagram": null,
+    "email": null
   }
 }
