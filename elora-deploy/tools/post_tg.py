@@ -210,7 +210,7 @@ def main():
                 break                                  # спробуємо в наступний запуск, без падіння workflow
             continue
         res = r['result'][0] if isinstance(r['result'], list) else r['result']
-        posted[p['k']] = {'id': p['id'], 'msg': res.get('message_id'), 'at': datetime.datetime.utcnow().isoformat(timespec='seconds')}
+        posted[p['k']] = {'id': p['id'], 'msg': res.get('message_id'), 'at': datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')}
         print(f"  ✓ {p['t']} — {money(price)}")
         done += 1
         time.sleep(3)
