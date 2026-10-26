@@ -1,11 +1,13 @@
-# Пости в Telegram-канал магазину: кожні 30 хв удень — один товар із Telegram-постачальників
-# (новинки першими, решта поступово). Публікує сайт (/api/tg-post) — токен бота лише у Vercel,
-# а GitHub підтверджує запит своїм OIDC-підписом. Що вже опубліковано — у гілці tg-state.
+# Пости в Telegram-канал магазину: удень кожні 30 хв — один товар із Telegram-постачальників
+# (новинки першими, решта поступово). Розклад GitHub для частих запусків ненадійний, тому один
+# запуск працює до ~5,5 год і сам публікує раз на 30 хв; запусків кілька на день, а ще його будить
+# автооновлення каталогу. Публікує сайт (/api/tg-post) — токен бота лише у Vercel, GitHub
+# підтверджує запит своїм OIDC-підписом. Що вже опубліковано — у гілці tg-state.
 name: Пости в Telegram-канал
 
 on:
   schedule:
-    - cron: '7,37 5-19 * * *'   # UTC ≈ 8:00–22:00 за Києвом; нічну паузу перевіряє й сам скрипт
+    - cron: '50 5,9,13,17 * * *'   # UTC; кожен запуск — цикл до ~5,5 год, нічну паузу перевіряє скрипт
   workflow_dispatch:
     inputs:
       n:
@@ -24,7 +26,7 @@ concurrency:
 jobs:
   post:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 350
     steps:
       - uses: actions/checkout@v4
         with:
@@ -42,16 +44,23 @@ jobs:
 
       - run: pip install --quiet Pillow
 
-      - name: Публікація
+      - name: Публікація раз на 30 хв (до 22:00 за Києвом або ~5,5 год)
         working-directory: elora-deploy
-        run: python3 tools/post_tg.py --state ../state/posted.json --n "${{ github.event.inputs.n || '1' }}"
-
-      - name: Зберегти стан
-        working-directory: state
         run: |
-          git add posted.json
-          git diff --cached --quiet && exit 0
-          git config user.name "elora-catalog-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -q -m "tg: опубліковано $(python3 -c "import json;print(len(json.load(open('posted.json'))['posted']))")"
-          git push origin HEAD:tg-state
+          git -C ../state config user.name "elora-catalog-bot"
+          git -C ../state config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          end=$(( $(date +%s) + 330*60 ))
+          n="${{ github.event.inputs.n || '1' }}"
+          while :; do
+            [ "$(TZ=Europe/Kyiv date +%-H)" -lt 7 ] && { echo "ніч — до ранкового запуску"; break; }
+            git -C .. pull -q --ff-only origin main || true          # свіжі товари й ціни
+            python3 tools/post_tg.py --state ../state/posted.json --n "$n" || true
+            n=1
+            if ! git -C ../state diff --quiet; then
+              git -C ../state commit -qam "tg: опубліковано $(python3 -c "import json;print(len(json.load(open('../state/posted.json'))['posted']))")"
+              git -C ../state push -q origin HEAD:tg-state || true
+            fi
+            [ "$(TZ=Europe/Kyiv date +%-H)" -ge 22 ] && break
+            [ $(( $(date +%s) + 1800 )) -gt "$end" ] && break
+            sleep 1800
+          done

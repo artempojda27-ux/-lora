@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: catalog-update
@@ -117,6 +118,14 @@ jobs:
           # основний домен — elora-shoes.com; якщо він недоступний, той самий сайт на lora-zeta.vercel.app
           curl -sSf -m 60 -X POST https://elora-shoes.com/api/stock-alerts \
             || curl -sS -m 60 -X POST https://lora-zeta.vercel.app/api/stock-alerts || true
+
+      - name: Розбудити пости в Telegram-канал
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # якщо цикл публікацій уже йде — новий запуск стане в чергу й продовжить після нього
+          gh workflow run tg-post.yml --ref main || true
 
       - name: Підсумок
         if: always()
