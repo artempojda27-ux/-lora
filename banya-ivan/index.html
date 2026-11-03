@@ -38,6 +38,10 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media (max-width:640px){body{background-size:auto,560px auto}}
+/* мягкий тёплый свет от печи по краям секций */
+.section::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 70% 55% at 50% 45%,rgba(255,160,80,.07),transparent 70%),linear-gradient(90deg,rgba(0,0,0,.35),transparent 18%,transparent 82%,rgba(0,0,0,.35))}
+.section{isolation:isolate}
 body{
   margin:0;
   font-family:"Cormorant Garamond",Georgia,serif;
@@ -45,18 +49,12 @@ body{
   line-height:1.55;
   color:var(--ink);
   background-color:var(--wood-1);
-  /* сруб: горизонтальные брёвна */
+  /* сруб: фототекстура beam_wall_01 (Poly Haven, CC0), перекрашена под морёную сосну */
   background-image:
-    var(--grain),
-    repeating-linear-gradient(180deg,
-      rgba(0,0,0,.55) 0 3px,
-      rgba(255,200,140,.05) 3px 6px,
-      rgba(0,0,0,0) 6px 60px,
-      rgba(0,0,0,.18) 60px 132px,
-      rgba(0,0,0,.35) 132px 140px),
-    linear-gradient(180deg,var(--wood-1),var(--wood-2) 40%,var(--wood-1));
-  background-size:700px 220px,100% 140px,100% 100%;
-  background-attachment:scroll;
+    linear-gradient(180deg,rgba(14,8,4,.5),rgba(14,8,4,.5)),
+    url("assets/logs.jpg");
+  background-size:auto,800px auto;
+  background-repeat:repeat;
   overflow-x:hidden;
   font-variant-numeric:lining-nums;
 }
@@ -126,29 +124,31 @@ h1,h2,h3{margin:0;line-height:1.1}
 @media (max-width:860px){.nav a:not(.brus){display:none}.topbar .brus{padding:10px 22px;min-height:42px;font-size:.85rem}}
 
 /* ---------- hero ---------- */
-.hero{position:relative;min-height:100svh;display:grid;place-items:center;overflow:hidden;isolation:isolate}
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;overflow:hidden;isolation:isolate}
 .hero video,.hero .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-3}
 .hero::before{content:"";position:absolute;inset:0;z-index:-2;
   background:
-    radial-gradient(ellipse 70% 60% at 50% 50%,rgba(20,11,6,.25),rgba(20,11,6,.78) 100%),
-    linear-gradient(180deg,rgba(20,11,6,.55) 0%,rgba(20,11,6,.1) 30%,rgba(20,11,6,.2) 65%,var(--wood-1) 100%)}
+    radial-gradient(ellipse 55% 28% at 50% 44%,rgba(20,11,6,.45),transparent 75%),
+    linear-gradient(180deg,rgba(20,11,6,.6) 0%,rgba(20,11,6,0) 20%,rgba(20,11,6,0) 58%,rgba(20,11,6,.6) 84%,rgba(20,11,6,.92) 100%)}
 /* резные наличники по бокам */
 .hero::after{content:"";position:absolute;inset:auto 0 0 0;height:22px;z-index:-1;background:var(--ornament) center/44px 22px repeat-x;opacity:.9}
-.hero-inner{text-align:center;padding:120px 16px 90px;max-width:900px}
+.hero-inner{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:110px 16px 24px;max-width:900px;margin:0 auto}
+.hero-inner .ornament.short{margin-top:14px}
+.hero-bottom{position:relative;padding:0 16px 58px;display:flex;flex-direction:column;align-items:center;gap:22px}
 .hero h1{font-family:"Ruslan Display",serif;font-weight:400;font-size:clamp(3.2rem,11vw,7.6rem);line-height:.95;color:var(--ink);
-  text-shadow:0 3px 0 #1a0d05,0 8px 30px rgba(0,0,0,.8),0 0 60px rgba(224,172,103,.25);margin:18px 0 8px}
+  text-shadow:0 3px 0 #1a0d05,0 6px 24px rgba(0,0,0,.75);margin:14px 0 4px}
+.hero .kicker{text-shadow:0 1px 2px #000,0 1px 10px rgba(0,0,0,.95)}
+@media (max-width:640px){.hero::before{background:radial-gradient(ellipse 95% 30% at 50% 50%,rgba(20,11,6,.55),transparent 75%),linear-gradient(180deg,rgba(20,11,6,.6) 0%,rgba(20,11,6,0) 18%,rgba(20,11,6,0) 60%,rgba(20,11,6,.65) 84%,rgba(20,11,6,.92) 100%)}}
 .hero h1 em{font-style:normal;color:var(--honey)}
-.hero .lead{font-size:clamp(1.2rem,2.6vw,1.55rem);max-width:640px;margin:18px auto 0;color:var(--ink);text-shadow:0 2px 8px #000}
-.hero .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;margin-top:40px}
-.hero-facts{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 28px;margin-top:44px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:.9rem;color:var(--honey-2);text-shadow:0 1px 4px #000}
+.hero .lead{font-size:clamp(1.15rem,2.4vw,1.45rem);max-width:560px;margin:16px auto 0;color:var(--ink);text-shadow:0 1px 3px #000,0 2px 14px rgba(0,0,0,.85)}
+.hero .actions{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:min(580px,100%)}
+.hero .actions .brus{width:100%;padding-inline:26px}
+.hero-facts{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 28px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:.9rem;color:var(--honey-2);text-shadow:0 1px 4px #000}
 .hero-facts span{display:flex;align-items:center;gap:10px}
 .hero-facts span+span::before{content:"";width:7px;height:7px;background:var(--red-2);transform:rotate(45deg);margin-right:18px;box-shadow:0 0 0 2px rgba(0,0,0,.4)}
-.scroll-cue{position:absolute;bottom:42px;left:50%;translate:-50% 0;color:var(--ink-dim);font-size:.8rem;letter-spacing:.3em;text-transform:uppercase;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:8px}
-.scroll-cue i{width:1px;height:38px;background:linear-gradient(var(--honey),transparent);animation:cue 2s ease-in-out infinite}
-@keyframes cue{0%,100%{transform:scaleY(.4);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}}
-.video-toggle{position:absolute;right:16px;bottom:44px;width:42px;height:42px;border-radius:50%;border:1px solid rgba(243,231,207,.4);background:rgba(20,11,6,.5);color:var(--ink);cursor:pointer;display:grid;place-items:center}
+.video-toggle{position:absolute;right:16px;bottom:62px;width:42px;height:42px;border-radius:50%;border:1px solid rgba(243,231,207,.4);background:rgba(20,11,6,.5);color:var(--ink);cursor:pointer;display:grid;place-items:center}
 .video-toggle:focus-visible{outline:2px solid var(--honey);outline-offset:3px}
-@media (max-width:640px){.scroll-cue{display:none}.hero .brus{width:100%;max-width:340px}.hero-facts{flex-direction:column;gap:8px}.hero-facts span+span::before{display:none}.logo span{font-size:1.1rem}.logo svg{width:32px;height:32px}}
+@media (max-width:640px){.hero .actions{gap:12px}.hero .actions .brus{font-size:.78rem;padding:14px 18px;min-height:54px;letter-spacing:.03em}.hero .actions .brus::before{left:7px}.hero .actions .brus::after{right:7px}.hero-bottom{padding-bottom:46px;gap:18px}.hero-facts{gap:6px 16px;font-size:.8rem}.hero-facts span+span::before{display:none}.video-toggle{bottom:auto;top:80px;width:38px;height:38px}.logo span{font-size:1.1rem}.logo svg{width:32px;height:32px}}
 
 /* ---------- доски-карточки ---------- */
 .plank{
@@ -322,7 +322,7 @@ footer .logo{justify-content:center;margin-bottom:10px}
 /* появление */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
 .reveal.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.zone .ph img{transition:none}.scroll-cue i{animation:none}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.zone .ph img{transition:none}}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
 </head>
@@ -360,18 +360,19 @@ footer .logo{justify-content:center;margin-bottom:10px}
     <div class="kicker">Русская баня на дровах</div>
     <h1>Баня <em>Иван</em></h1>
     <div class="ornament short" aria-hidden="true"></div>
-    <p class="lead">Жаркая парная с дубовыми вениками, холодный чан, джакузи-чан под открытым небом и вид на море и лес.</p>
-    <div class="actions">
-      <a class="brus" href="#calc">Забронировать</a>
-      <a class="brus dark" href="#prices">Цены</a>
-    </div>
+    <p class="lead">Жаркая парная, дубовые веники и джакузи-чан с видом на море и лес.</p>
+  </div>
+  <div class="hero-bottom">
     <div class="hero-facts">
       <span>10:00 — 23:00</span>
       <span>до 10 гостей</span>
       <span>от 30 € / час</span>
     </div>
+    <div class="actions">
+      <a class="brus" href="#calc">Забронировать</a>
+      <a class="brus dark" href="#prices">Цены</a>
+    </div>
   </div>
-  <a class="scroll-cue" href="#zones">Листайте<i></i></a>
   <button class="video-toggle" id="videoToggle" type="button" aria-label="Поставить видео на паузу">
     <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/></svg>
   </button>
