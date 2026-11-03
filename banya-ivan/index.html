@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Баня Иван — русская баня на дровах</title>
+<meta name="description" content="Русская баня на дровах с дубовыми вениками, холодным чаном, джакузи-чаном под открытым небом, BBQ-зоной и видом на море и лес. Работаем 10:00–23:00.">
+<meta name="theme-color" content="#1c110a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='23' fill='%232e1c10'/%3E%3Cpath fill='%23e0ac67' d='M24 8l9 9-9 9-9-9zM24 26v14'/%3E%3C/svg%3E">
+<meta property="og:title" content="Баня Иван — русская баня на дровах">
+<meta property="og:description" content="Парная с дубовыми вениками, холодный чан, джакузи-чан с видом на море и лес. 10:00–23:00.">
+<meta property="og:image" content="assets/hero-poster.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ruslan+Display&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Neucha&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wood-0:#140b06;
+  --wood-1:#1f130b;
+  --wood-2:#2e1c10;
+  --wood-3:#4a2e19;
+  --wood-4:#7a4e2a;
+  --honey:#e0ac67;
+  --honey-2:#f2cf96;
+  --linen:#efe3c8;
+  --linen-2:#e4d3ae;
+  --ink:#f3e7cf;
+  --ink-dim:#c9b490;
+  --red:#a8231b;
+  --red-2:#c8382c;
+  --moss:#5f6e43;
+  --moss-2:#7c8c57;
+  --radius:6px;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0035 0.16' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.10 0 0 0 0 0.05 0 0 0 0 0.02 1.6 0 0 0 -0.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain-light:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.004 0.22' numOctaves='3' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.18 0 0 0 0 0.06 1.3 0 0 0 -0.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --ornament:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='22' viewBox='0 0 44 22'%3E%3Cg fill='%23a8231b'%3E%3Cpath d='M11 1l10 10-10 10L1 11z'/%3E%3Cpath d='M33 6l5 5-5 5-5-5z'/%3E%3C/g%3E%3Cpath d='M11 6l5 5-5 5-5-5z' fill='%23efe3c8'/%3E%3Crect x='10' y='10' width='2' height='2' fill='%23a8231b'/%3E%3Cpath d='M23 11h4M39 11h4' stroke='%23a8231b' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:1.15rem;
+  line-height:1.55;
+  color:var(--ink);
+  background-color:var(--wood-1);
+  /* сруб: горизонтальные брёвна */
+  background-image:
+    var(--grain),
+    repeating-linear-gradient(180deg,
+      rgba(0,0,0,.55) 0 3px,
+      rgba(255,200,140,.05) 3px 6px,
+      rgba(0,0,0,0) 6px 60px,
+      rgba(0,0,0,.18) 60px 132px,
+      rgba(0,0,0,.35) 132px 140px),
+    linear-gradient(180deg,var(--wood-1),var(--wood-2) 40%,var(--wood-1));
+  background-size:700px 220px,100% 140px,100% 100%;
+  background-attachment:scroll;
+  overflow-x:hidden;
+  font-variant-numeric:lining-nums;
+}
+img,video{display:block;max-width:100%}
+a{color:inherit}
+.wrap{width:min(1180px,100% - 32px);margin-inline:auto}
+
+/* ---------- типографика ---------- */
+.slavic{font-family:"Ruslan Display","Cormorant Garamond",serif;font-weight:400;letter-spacing:.03em}
+h1,h2,h3{margin:0;line-height:1.1}
+.kicker{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:.95rem;letter-spacing:.32em;text-transform:uppercase;color:var(--honey)}
+.section{padding:clamp(72px,10vw,128px) 0;position:relative}
+.section-head{text-align:center;margin-bottom:clamp(36px,5vw,60px)}
+.section-head h2{font-family:"Ruslan Display",serif;font-weight:400;font-size:clamp(2.1rem,5.2vw,3.6rem);color:var(--ink);text-shadow:0 2px 0 #000,0 0 30px rgba(224,172,103,.18);margin-top:10px}
+.section-head p{max-width:620px;margin:16px auto 0;color:var(--ink-dim);font-size:1.2rem}
+.ornament{height:22px;background:var(--ornament) center/44px 22px repeat-x;opacity:.95}
+.ornament.short{width:min(264px,70%);margin:18px auto 0}
+.divider{position:relative;height:42px;display:flex;align-items:center}
+.divider::before{content:"";flex:1;height:22px;background:var(--ornament) center/44px 22px repeat-x;filter:drop-shadow(0 1px 0 #000)}
+
+/* ---------- бруски-кнопки ---------- */
+.brus{
+  --c1:#e9c08a;--c2:#c98f52;--c3:#9a6232;--txt:#2a160a;
+  position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:16px 40px;min-height:56px;
+  font-family:"Ruslan Display",serif;font-size:1.05rem;letter-spacing:.06em;line-height:1;
+  color:var(--txt);text-decoration:none;cursor:pointer;border:0;border-radius:3px;
+  background:
+    var(--grain-light),
+    linear-gradient(180deg,var(--c1) 0%,var(--c2) 48%,var(--c3) 100%);
+  background-size:500px 100%,auto;
+  box-shadow:
+    inset 0 2px 0 rgba(255,240,210,.55),
+    inset 0 -3px 0 rgba(50,22,6,.45),
+    inset 14px 0 14px -10px rgba(50,22,6,.7),
+    inset -14px 0 14px -10px rgba(50,22,6,.7),
+    0 5px 0 #3b200e,
+    0 12px 22px rgba(0,0,0,.55);
+  text-shadow:0 1px 0 rgba(255,236,200,.55),0 -1px 0 rgba(0,0,0,.25);
+  transition:transform .15s ease,box-shadow .15s ease,filter .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+/* шляпки гвоздей на торцах */
+.brus::before,.brus::after{
+  content:"";position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#d8d2c6,#6b6257 60%,#2b2620);
+  box-shadow:0 1px 1px rgba(0,0,0,.6);
+}
+.brus::before{left:12px}.brus::after{right:12px}
+.brus:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.brus:active{transform:translateY(4px);box-shadow:inset 0 2px 0 rgba(255,240,210,.5),inset 0 -3px 0 rgba(50,22,6,.45),inset 14px 0 14px -10px rgba(50,22,6,.7),inset -14px 0 14px -10px rgba(50,22,6,.7),0 1px 0 #3b200e,0 4px 10px rgba(0,0,0,.5)}
+.brus:focus-visible{outline:3px solid var(--honey-2);outline-offset:4px}
+.brus.dark{--c1:#6a4426;--c2:#4a2c17;--c3:#2f1b0d;--txt:var(--ink);text-shadow:0 -1px 0 rgba(0,0,0,.7),0 1px 0 rgba(255,210,150,.12)}
+.brus.small{padding:11px 26px;min-height:44px;font-size:.9rem}
+.brus[aria-pressed="true"]{--c1:#f3d29e;--c2:#d9a35b;--c3:#a96b30;--txt:#2a160a;text-shadow:0 1px 0 rgba(255,236,200,.55);transform:translateY(3px);box-shadow:inset 0 2px 0 rgba(255,240,210,.55),inset 0 -3px 0 rgba(50,22,6,.45),inset 14px 0 14px -10px rgba(50,22,6,.7),inset -14px 0 14px -10px rgba(50,22,6,.7),0 2px 0 #3b200e,0 0 0 2px var(--honey),0 6px 14px rgba(0,0,0,.5)}
+
+/* ---------- шапка ---------- */
+.topbar{position:fixed;inset:0 0 auto 0;z-index:50;transition:background .3s,box-shadow .3s,padding .3s;padding:18px 0}
+.topbar.scrolled{background:rgba(20,11,6,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 1px 0 rgba(224,172,103,.18),0 8px 24px rgba(0,0,0,.5);padding:10px 0}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+.logo svg{width:38px;height:38px;flex:none}
+.logo span{white-space:nowrap;font-family:"Ruslan Display",serif;font-size:1.35rem;letter-spacing:.08em;color:var(--ink);text-shadow:0 2px 4px #000}
+.nav{display:flex;gap:26px;align-items:center}
+.nav a{text-decoration:none;font-weight:600;font-size:1.02rem;letter-spacing:.06em;color:var(--ink);opacity:.85;text-shadow:0 1px 3px #000}
+.nav a:hover{opacity:1;color:var(--honey-2)}
+@media (max-width:860px){.nav a:not(.brus){display:none}.topbar .brus{padding:10px 22px;min-height:42px;font-size:.85rem}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;display:grid;place-items:center;overflow:hidden;isolation:isolate}
+.hero video,.hero .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-3}
+.hero::before{content:"";position:absolute;inset:0;z-index:-2;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 50%,rgba(20,11,6,.25),rgba(20,11,6,.78) 100%),
+    linear-gradient(180deg,rgba(20,11,6,.55) 0%,rgba(20,11,6,.1) 30%,rgba(20,11,6,.2) 65%,var(--wood-1) 100%)}
+/* резные наличники по бокам */
+.hero::after{content:"";position:absolute;inset:auto 0 0 0;height:22px;z-index:-1;background:var(--ornament) center/44px 22px repeat-x;opacity:.9}
+.hero-inner{text-align:center;padding:120px 16px 90px;max-width:900px}
+.hero h1{font-family:"Ruslan Display",serif;font-weight:400;font-size:clamp(3.2rem,11vw,7.6rem);line-height:.95;color:var(--ink);
+  text-shadow:0 3px 0 #1a0d05,0 8px 30px rgba(0,0,0,.8),0 0 60px rgba(224,172,103,.25);margin:18px 0 8px}
+.hero h1 em{font-style:normal;color:var(--honey)}
+.hero .lead{font-size:clamp(1.2rem,2.6vw,1.55rem);max-width:640px;margin:18px auto 0;color:var(--ink);text-shadow:0 2px 8px #000}
+.hero .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;margin-top:40px}
+.hero-facts{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 28px;margin-top:44px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:.9rem;color:var(--honey-2);text-shadow:0 1px 4px #000}
+.hero-facts span{display:flex;align-items:center;gap:10px}
+.hero-facts span+span::before{content:"";width:7px;height:7px;background:var(--red-2);transform:rotate(45deg);margin-right:18px;box-shadow:0 0 0 2px rgba(0,0,0,.4)}
+.scroll-cue{position:absolute;bottom:42px;left:50%;translate:-50% 0;color:var(--ink-dim);font-size:.8rem;letter-spacing:.3em;text-transform:uppercase;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:8px}
+.scroll-cue i{width:1px;height:38px;background:linear-gradient(var(--honey),transparent);animation:cue 2s ease-in-out infinite}
+@keyframes cue{0%,100%{transform:scaleY(.4);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}}
+.video-toggle{position:absolute;right:16px;bottom:44px;width:42px;height:42px;border-radius:50%;border:1px solid rgba(243,231,207,.4);background:rgba(20,11,6,.5);color:var(--ink);cursor:pointer;display:grid;place-items:center}
+.video-toggle:focus-visible{outline:2px solid var(--honey);outline-offset:3px}
+@media (max-width:640px){.scroll-cue{display:none}.hero .brus{width:100%;max-width:340px}.hero-facts{flex-direction:column;gap:8px}.hero-facts span+span::before{display:none}.logo span{font-size:1.1rem}.logo svg{width:32px;height:32px}}
+
+/* ---------- доски-карточки ---------- */
+.plank{
+  position:relative;border-radius:var(--radius);
+  background:
+    radial-gradient(circle at 14px 14px,#cfc6b6 0 2px,#3a2e22 3px,transparent 4.5px),
+    radial-gradient(circle at calc(100% - 14px) 14px,#cfc6b6 0 2px,#3a2e22 3px,transparent 4.5px),
+    radial-gradient(circle at 14px calc(100% - 14px),#cfc6b6 0 2px,#3a2e22 3px,transparent 4.5px),
+    radial-gradient(circle at calc(100% - 14px) calc(100% - 14px),#cfc6b6 0 2px,#3a2e22 3px,transparent 4.5px),
+    var(--grain),
+    linear-gradient(170deg,#5e3b20 0%,#45291a 60%,#3a2313 100%);
+  background-color:#45291a;
+  background-size:auto,auto,auto,auto,700px 220px,auto;
+  box-shadow:inset 0 1px 0 rgba(255,220,170,.18),inset 0 0 0 1px rgba(0,0,0,.5),inset 0 0 40px rgba(0,0,0,.35),0 18px 40px rgba(0,0,0,.55);
+}
+.plank.light{
+  background:
+    radial-gradient(circle at 14px 14px,#efe8dc 0 2px,#5a4632 3px,transparent 4.5px),
+    radial-gradient(circle at calc(100% - 14px) 14px,#efe8dc 0 2px,#5a4632 3px,transparent 4.5px),
+    radial-gradient(circle at 14px calc(100% - 14px),#efe8dc 0 2px,#5a4632 3px,transparent 4.5px),
+    radial-gradient(circle at calc(100% - 14px) calc(100% - 14px),#efe8dc 0 2px,#5a4632 3px,transparent 4.5px),
+    var(--grain-light),
+    linear-gradient(170deg,#d7ad78 0%,#c4925a 55%,#ad7a44 100%);
+  background-size:auto,auto,auto,auto,500px 160px,auto;
+  color:#2a160a;
+}
+
+/* зоны */
+.zones{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+@media (max-width:980px){.zones{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.zones{grid-template-columns:1fr}}
+.zone{padding:16px 16px 26px;display:flex;flex-direction:column}
+.zone .ph{position:relative;aspect-ratio:4/5;overflow:hidden;border-radius:3px;box-shadow:0 0 0 5px #24150b,0 0 0 6px rgba(224,172,103,.35),inset 0 0 0 1px rgba(0,0,0,.4)}
+.zone .ph img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.zone:hover .ph img{transform:scale(1.06)}
+.zone .ph .tag{position:absolute;left:12px;top:12px}
+.zone h3{font-family:"Ruslan Display",serif;font-weight:400;font-size:1.55rem;margin:26px 8px 8px;color:var(--ink)}
+.zone p{margin:0 8px;color:var(--ink-dim);font-size:1.1rem}
+.zone .meta{margin:16px 8px 0;padding-top:14px;border-top:1px dashed rgba(224,172,103,.3);display:flex;justify-content:space-between;align-items:center;font-weight:700;letter-spacing:.06em;color:var(--honey-2)}
+
+/* мох-ценник как на афишах */
+.moss{display:inline-block;padding:6px 16px 7px;font-family:"Neucha","Cormorant Garamond",cursive;font-size:1.25rem;line-height:1;color:#f5ecd6;
+  background:var(--moss);border-radius:40% 55% 45% 60%/60% 45% 55% 40%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 3px 8px rgba(0,0,0,.45);transform:rotate(-3deg)}
+.moss.free{background:var(--red)}
+
+/* ---------- прайс ---------- */
+.prices{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:stretch}
+@media (max-width:820px){.prices{grid-template-columns:1fr}}
+.price-board{padding:44px clamp(22px,4vw,48px) 40px}
+.price-board .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;padding-bottom:18px;border-bottom:2px solid rgba(42,22,10,.35)}
+.price-board h3{font-family:"Ruslan Display",serif;font-weight:400;font-size:clamp(1.5rem,3.4vw,2.1rem)}
+.price-board .days{font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.85rem;opacity:.75}
+.price-board .badge{display:inline-block;margin-top:6px;font-family:"Neucha",cursive;font-size:1.2rem;color:#6e120c}
+.rows{list-style:none;margin:10px 0 0;padding:0}
+.rows li{display:flex;align-items:baseline;gap:12px;padding:16px 0;border-bottom:1px solid rgba(42,22,10,.18);font-size:1.25rem;font-weight:600}
+.rows li:last-child{border-bottom:0}
+.rows li .dots{flex:1;border-bottom:2px dotted rgba(42,22,10,.35);transform:translateY(-5px)}
+.rows li b{font-family:"Ruslan Display",serif;font-weight:400;font-size:1.65rem;letter-spacing:.02em}
+.rows li small{font-size:1rem;font-weight:600;opacity:.75}
+.rows .ppl{display:flex;align-items:center;gap:10px}
+.rows .ppl svg{width:22px;height:22px;opacity:.6;flex:none}
+.price-board.dark{color:var(--ink)}
+.price-board.dark .head{border-color:rgba(224,172,103,.35)}
+.price-board.dark .rows li{border-color:rgba(224,172,103,.14)}
+.price-board.dark .rows li .dots{border-color:rgba(224,172,103,.3)}
+.price-board.dark .rows li b{color:var(--honey)}
+.price-board.dark .badge{color:var(--honey-2)}
+.hours{margin:44px auto 0;max-width:720px;text-align:center;padding:30px 24px;border:1px solid rgba(224,172,103,.28);border-radius:var(--radius);background:rgba(20,11,6,.45);backdrop-filter:blur(2px)}
+.hours .kicker{display:block}
+.hours strong{display:block;font-family:"Ruslan Display",serif;font-weight:400;font-size:clamp(2.2rem,6vw,3.2rem);margin-top:8px;letter-spacing:.04em}
+.hours p{margin:6px 0 0;color:var(--ink-dim)}
+
+/* ---------- доп. услуги ---------- */
+.extras{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+@media (max-width:900px){.extras{grid-template-columns:1fr}}
+.extra{display:grid;grid-template-rows:auto 1fr;overflow:hidden;padding:0}
+.extra .ph{aspect-ratio:16/11;overflow:hidden;position:relative}
+.extra .ph img{width:100%;height:100%;object-fit:cover}
+.extra .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(20,11,6,.75))}
+.extra .ph .moss{position:absolute;right:18px;bottom:16px;z-index:1;font-size:1.7rem;padding:8px 20px 10px}
+.extra .body{padding:22px 26px 30px}
+.extra h3{font-family:"Ruslan Display",serif;font-weight:400;font-size:1.45rem}
+.extra p{margin:10px 0 0;color:var(--ink-dim)}
+.coal{display:flex;gap:10px;align-items:center;margin-top:14px;padding-top:14px;border-top:1px dashed rgba(224,172,103,.3);font-weight:600}
+.coal .moss{font-size:1.05rem;padding:4px 12px 5px}
+
+/* рушник-подарок */
+.rushnyk{position:relative;margin-top:56px;padding:56px clamp(20px,5vw,72px);text-align:center;color:#2a160a;border-radius:2px;
+  background:
+    repeating-linear-gradient(90deg,rgba(120,90,50,.05) 0 1px,transparent 1px 3px),
+    repeating-linear-gradient(0deg,rgba(120,90,50,.05) 0 1px,transparent 1px 3px),
+    linear-gradient(180deg,var(--linen),var(--linen-2));
+  box-shadow:0 20px 50px rgba(0,0,0,.55)}
+.rushnyk::before,.rushnyk::after{content:"";position:absolute;left:0;right:0;height:22px;background:var(--ornament) center/44px 22px repeat-x}
+.rushnyk::before{top:16px}.rushnyk::after{bottom:16px}
+.rushnyk .fringe{position:absolute;left:0;right:0;height:14px;background:repeating-linear-gradient(90deg,var(--linen-2) 0 3px,transparent 3px 7px)}
+.rushnyk .fringe.t{top:-12px}.rushnyk .fringe.b{bottom:-12px}
+.rushnyk h3{font-family:"Ruslan Display",serif;font-weight:400;font-size:clamp(1.7rem,4.6vw,2.8rem);color:var(--red);margin-top:14px}
+.rushnyk p{font-size:1.25rem;margin:12px auto 0;max-width:620px;font-weight:600}
+.rushnyk .gift{font-family:"Neucha",cursive;font-size:clamp(1.6rem,4vw,2.2rem);color:#45512e;display:block;margin-top:8px}
+.rushnyk svg.gift-ic{width:46px;height:46px;color:var(--red)}
+
+/* ---------- принадлежности ---------- */
+.kit{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+@media (max-width:900px){.kit{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:420px){.kit{gap:14px}}
+.kit-item{padding:34px 18px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
+.kit-item svg{width:64px;height:64px;color:#3a1f0d}
+.kit-item h3{font-family:"Ruslan Display",serif;font-weight:400;font-size:1.25rem}
+.kit-item p{margin:0;font-size:1rem;opacity:.8;line-height:1.35}
+.kit-item .moss{margin-top:auto;font-size:1.4rem}
+
+/* ---------- калькулятор ---------- */
+.calc{display:grid;grid-template-columns:1.35fr 1fr;gap:32px;align-items:start}
+@media (max-width:900px){.calc{grid-template-columns:1fr}}
+.calc-form{padding:36px clamp(20px,4vw,44px) 40px}
+.field{margin-bottom:28px}
+.field>label,.field>.lbl{display:block;font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:.82rem;color:var(--honey);margin-bottom:12px}
+.seg{display:flex;flex-wrap:wrap;gap:14px 16px}
+.seg .brus{flex:1 1 140px;padding:13px 18px;min-height:48px;font-size:.92rem}
+.stepper{display:flex;align-items:center;gap:16px}
+.stepper output{min-width:110px;text-align:center;font-family:"Ruslan Display",serif;font-size:1.6rem}
+.stepper .brus{width:52px;padding:0;min-height:46px;font-size:1.4rem}
+.stepper .brus::before,.stepper .brus::after{display:none}
+input[type=range]{width:100%;height:28px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:4px;background:linear-gradient(180deg,#120a05,#2a1a10);box-shadow:inset 0 1px 2px #000,0 1px 0 rgba(224,172,103,.2)}
+input[type=range]::-moz-range-track{height:8px;border-radius:4px;background:#1a0f08;box-shadow:inset 0 1px 2px #000}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:22px;margin-top:-7px;border-radius:3px;background:linear-gradient(180deg,#e9c08a,#a96b30);box-shadow:inset 0 1px 0 rgba(255,240,210,.6),0 3px 0 #3b200e,0 4px 8px rgba(0,0,0,.5)}
+input[type=range]::-moz-range-thumb{width:34px;height:22px;border:0;border-radius:3px;background:linear-gradient(180deg,#e9c08a,#a96b30);box-shadow:0 3px 0 #3b200e}
+input[type=range]:focus-visible{outline:2px solid var(--honey-2);outline-offset:4px}
+.checks{display:grid;gap:12px}
+.check{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:4px;background:rgba(0,0,0,.22);box-shadow:inset 0 0 0 1px rgba(224,172,103,.18);cursor:pointer;font-weight:600}
+.check input{width:22px;height:22px;accent-color:var(--honey);flex:none}
+.check .p{margin-left:auto;color:var(--honey-2);white-space:nowrap}
+.check.disabled{opacity:.45;cursor:not-allowed}
+.rent{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:480px){.rent{grid-template-columns:1fr}}
+.rent-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px 10px 16px;border-radius:4px;background:rgba(0,0,0,.22);box-shadow:inset 0 0 0 1px rgba(224,172,103,.18);font-weight:600}
+.rent-row small{display:block;color:var(--honey-2);font-weight:600}
+.mini{display:flex;align-items:center;gap:8px}
+.mini button{width:34px;height:34px;border-radius:3px;border:0;cursor:pointer;font-size:1.2rem;font-weight:700;color:#2a160a;
+  background:var(--grain-light),linear-gradient(180deg,#e9c08a,#b47a42);background-size:300px 100%,auto;box-shadow:inset 0 1px 0 rgba(255,240,210,.5),0 3px 0 #3b200e}
+.mini button:active{transform:translateY(2px);box-shadow:0 1px 0 #3b200e}
+.mini button:focus-visible{outline:2px solid var(--honey-2);outline-offset:2px}
+.mini output{min-width:22px;text-align:center;font-weight:700}
+.receipt{padding:36px 32px 34px;position:sticky;top:90px}
+.receipt h3{font-family:"Ruslan Display",serif;font-weight:400;font-size:1.6rem;text-align:center}
+.receipt ul{list-style:none;padding:0;margin:22px 0 0}
+.receipt li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed rgba(42,22,10,.3);font-weight:600;font-size:1.08rem}
+.receipt li span:last-child{white-space:nowrap}
+.receipt li.gift span:last-child{color:#6e120c;font-family:"Neucha",cursive}
+.receipt .total{display:flex;justify-content:space-between;align-items:baseline;margin-top:20px;padding-top:16px;border-top:3px double rgba(42,22,10,.55)}
+.receipt .total span{font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.9rem}
+.receipt .total b{font-family:"Ruslan Display",serif;font-weight:400;font-size:2.6rem;line-height:1}
+.receipt .note{font-size:.95rem;opacity:.75;margin:14px 0 0;line-height:1.35;text-align:center}
+.receipt .brus{width:100%;margin-top:22px}
+.toast{position:fixed;left:50%;bottom:24px;translate:-50% calc(100% + 40px);visibility:hidden;z-index:60;padding:14px 22px;border-radius:4px;background:#1c110a;color:var(--ink);box-shadow:0 0 0 1px rgba(224,172,103,.4),0 14px 30px rgba(0,0,0,.6);transition:translate .35s cubic-bezier(.2,.8,.2,1);max-width:calc(100% - 32px);text-align:center}
+.toast.show{translate:-50% 0;visibility:visible}
+
+/* ---------- контакты / футер ---------- */
+.contact{text-align:center;padding:clamp(50px,7vw,80px) clamp(20px,5vw,60px)}
+.contact h2{font-family:"Ruslan Display",serif;font-weight:400;font-size:clamp(2rem,5vw,3.2rem)}
+.contact p{max-width:600px;margin:14px auto 0;color:var(--ink-dim);font-size:1.2rem}
+.contact .actions{display:flex;flex-wrap:wrap;gap:22px;justify-content:center;margin-top:34px}
+.contact .ig{display:inline-flex;align-items:center;gap:8px}
+.contact .ig svg{width:20px;height:20px}
+footer{padding:40px 0 48px;text-align:center;color:var(--ink-dim);font-size:1rem}
+footer .ornament{margin-bottom:28px}
+footer .logo{justify-content:center;margin-bottom:10px}
+
+/* появление */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.zone .ph img{transition:none}.scroll-cue i{animation:none}}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+
+<!-- символ: дубовый лист -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="leaf" viewBox="0 0 48 48"><path fill="currentColor" d="M24 3c3 2 4 5 3 8 3-1 6 0 7 3-2 1-4 2-5 4 3 0 6 2 6 5-2 1-5 1-7 0 1 3 1 6-1 8-1-1-2-3-3-5v15h-2V30c-1 2-2 4-3 5-2-2-2-5-1-8-2 1-5 1-7 0 0-3 3-5 6-5-1-2-3-3-5-4 1-3 4-4 7-3-1-3 0-6 3-8z"/></symbol>
+  <symbol id="person" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4" fill="currentColor"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z" fill="currentColor"/></symbol>
+</svg>
+
+<header class="topbar" id="top">
+  <div class="wrap">
+    <a class="logo" href="#hero" aria-label="Баня Иван — на главную">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#2e1c10" stroke="#e0ac67" stroke-width="1.5"/><use href="#leaf" x="8" y="7" width="32" height="32" style="color:#e0ac67"/></svg>
+      <span>Баня Иван</span>
+    </a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="#zones">Территория</a>
+      <a href="#prices">Цены</a>
+      <a href="#extras">Дополнительно</a>
+      <a href="#calc">Расчёт</a>
+      <a class="brus small" href="#contact">Забронировать</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- ================= HERO ================= -->
+<section class="hero" id="hero">
+  <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="assets/hero-poster.jpg" aria-hidden="true">
+    <source src="assets/hero.mp4" type="video/mp4">
+  </video>
+  <div class="hero-inner">
+    <div class="kicker">Русская баня на дровах</div>
+    <h1>Баня <em>Иван</em></h1>
+    <div class="ornament short" aria-hidden="true"></div>
+    <p class="lead">Жаркая парная с дубовыми вениками, холодный чан, джакузи-чан под открытым небом и вид на море и лес.</p>
+    <div class="actions">
+      <a class="brus" href="#calc">Забронировать</a>
+      <a class="brus dark" href="#prices">Цены</a>
+    </div>
+    <div class="hero-facts">
+      <span>10:00 — 23:00</span>
+      <span>до 10 гостей</span>
+      <span>от 30 € / час</span>
+    </div>
+  </div>
+  <a class="scroll-cue" href="#zones">Листайте<i></i></a>
+  <button class="video-toggle" id="videoToggle" type="button" aria-label="Поставить видео на паузу">
+    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/></svg>
+  </button>
+</section>
+
+<!-- ================= ЗОНЫ ================= -->
+<section class="section" id="zones">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Что вас ждёт</div>
+      <h2>Банный двор</h2>
+      <div class="ornament short" aria-hidden="true"></div>
+      <p>Сруб в сосновом лесу, тёплый чан с видом на море и всё для настоящего русского пара.</p>
+    </div>
+
+    <div class="zones">
+      <article class="plank zone reveal">
+        <div class="ph"><img src="assets/sauna.jpg" alt="Парная из бревна с полками и деревянной шайкой с дубовыми вениками" loading="lazy"></div>
+        <h3>Баня ~ сауна</h3>
+        <p>Парная из бревна, печь на дровах, мягкий пар, тёплая подсветка полков — и холодный чан после парилки.</p>
+        <div class="meta"><span>Основа отдыха</span><span>от 30 €/час</span></div>
+      </article>
+      <article class="plank zone reveal">
+        <div class="ph"><img src="assets/fire.jpg" alt="Огонь в банной печи на дровах" loading="lazy"></div>
+        <h3>Печь на дровах</h3>
+        <p>Живой огонь и настоящий жар. Запарим для вас свежие дубовые веники — 8 €.</p>
+        <div class="meta"><span>Дубовый веник</span><span>8 €</span></div>
+      </article>
+      <article class="plank zone reveal">
+        <div class="ph"><img src="assets/jacuzzi.jpg" alt="Круглый джакузи-чан с лесенкой среди сосен" loading="lazy"><span class="tag moss">+20 €</span></div>
+        <h3>Джакузи-чан</h3>
+        <p>Под открытым небом, с тёплой водой и видом на море и лес.</p>
+        <div class="meta"><span>От 5 часов</span><span>в подарок</span></div>
+      </article>
+      <article class="plank zone reveal">
+        <div class="ph"><img src="assets/bbq.jpg" alt="Каменная BBQ-зона с видом на море" loading="lazy"><span class="tag moss">+8 €</span></div>
+        <h3>BBQ-зона</h3>
+        <p>Каменный мангал с дымоходом и видом на море. Шашлык после пара — по-нашему.</p>
+        <div class="meta"><span>От 5 часов</span><span>в подарок</span></div>
+      </article>
+      <article class="plank zone reveal">
+        <div class="ph"><img src="assets/trampoline.jpg" alt="Большой батут с сеткой под навесом среди сосен" loading="lazy"></div>
+        <h3>Большой батут</h3>
+        <p>Под навесом среди сосен — для детей и тех, кто снова хочет быть ребёнком.</p>
+        <div class="meta"><span>Входит в аренду</span><span>✦</span></div>
+      </article>
+      <article class="plank zone reveal">
+        <div class="ph"><img src="assets/interior.jpg" alt="Комната отдыха в срубе: деревянный стол, лавки и окно в лес" loading="lazy"></div>
+        <h3>Комната отдыха</h3>
+        <p>Сруб с массивным столом и лавками, окно в лес — для чая, разговоров и застолья.</p>
+        <div class="meta"><span>Входит в аренду</span><span>✦</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="wrap divider" aria-hidden="true"></div>
+
+<!-- ================= ЦЕНЫ ================= -->
+<section class="section" id="prices">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Прайс-лист</div>
+      <h2>Аренда бани</h2>
+      <div class="ornament short" aria-hidden="true"></div>
+      <p>Баня целиком в вашем распоряжении. Стоимость — за час, зависит от дня недели и числа гостей.</p>
+    </div>
+
+    <div class="prices">
+      <article class="plank light price-board reveal">
+        <div class="head">
+          <div><h3>Будни</h3><span class="badge">выгоднее</span></div>
+          <span class="days">Понедельник — Четверг</span>
+        </div>
+        <ul class="rows">
+          <li><span class="ppl"><svg aria-hidden="true"><use href="#person"/></svg>до 2 человек</span><i class="dots"></i><b>30 €</b><small>/час</small></li>
+          <li><span class="ppl"><svg aria-hidden="true"><use href="#person"/></svg>3–6 человек</span><i class="dots"></i><b>35 €</b><small>/час</small></li>
+          <li><span class="ppl"><svg aria-hidden="true"><use href="#person"/></svg>7–10 человек</span><i class="dots"></i><b>45 €</b><small>/час</small></li>
+        </ul>
+      </article>
+      <article class="plank price-board dark reveal">
+        <div class="head">
+          <div><h3>Выходные</h3><span class="badge">лучший пар недели</span></div>
+          <span class="days">Пятница — Воскресенье</span>
+        </div>
+        <ul class="rows">
+          <li><span class="ppl"><svg aria-hidden="true"><use href="#person"/></svg>до 2 человек</span><i class="dots"></i><b>40 €</b><small>/час</small></li>
+          <li><span class="ppl"><svg aria-hidden="true"><use href="#person"/></svg>3–6 человек</span><i class="dots"></i><b>45 €</b><small>/час</small></li>
+          <li><span class="ppl"><svg aria-hidden="true"><use href="#person"/></svg>7–10 человек</span><i class="dots"></i><b>55 €</b><small>/час</small></li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="hours reveal">
+      <span class="kicker">Часы работы</span>
+      <strong>10:00 — 23:00</strong>
+      <p>Ежедневно, по предварительной записи</p>
+    </div>
+  </div>
+</section>
+
+<div class="wrap divider" aria-hidden="true"></div>
+
+<!-- ================= ДОПОЛНИТЕЛЬНО ================= -->
+<section class="section" id="extras">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">К бане в придачу</div>
+      <h2>Дополнительно</h2>
+      <div class="ornament short" aria-hidden="true"></div>
+    </div>
+
+    <div class="extras">
+      <article class="plank extra reveal">
+        <div class="ph"><img src="assets/jacuzzi.jpg" alt="Джакузи-чан" loading="lazy"><span class="moss">+20 €</span></div>
+        <div class="body">
+          <h3>Джакузи-чан</h3>
+          <p>Тёплая вода с пузырьками под открытым небом. Лучшее место, чтобы встретить закат.</p>
+        </div>
+      </article>
+      <article class="plank extra reveal">
+        <div class="ph"><img src="assets/shashlik.jpg" alt="Шашлык на шампурах над углями" loading="lazy"><span class="moss">+8 €</span></div>
+        <div class="body">
+          <h3>BBQ-зона</h3>
+          <p>Каменный мангал, решётки и стол. Приносите своё мясо и овощи.</p>
+          <div class="coal"><span>С нашими углями</span><span class="moss">+7 €</span></div>
+        </div>
+      </article>
+      <article class="plank extra reveal">
+        <div class="ph"><img src="assets/house.jpg" alt="Деревянный сруб бани с террасой среди сосен" loading="lazy"><span class="moss free">включено</span></div>
+        <div class="body">
+          <h3>Уже в аренде</h3>
+          <p>Печь на дровах, холодный чан, комната отдыха и большой батут — без доплат.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="rushnyk reveal">
+      <i class="fringe t" aria-hidden="true"></i><i class="fringe b" aria-hidden="true"></i>
+      <svg class="gift-ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="18" width="34" height="24" rx="1"/><rect x="4" y="12" width="40" height="7" rx="1"/><path d="M24 12v30M24 12c-3-7-12-8-12-3s9 3 12 3c3 0 12 2 12-3s-9-4-12 3"/></svg>
+      <h3>От 5 часов отдыха</h3>
+      <p>Джакузи-чан и BBQ-зона</p>
+      <span class="gift">в подарок!</span>
+    </div>
+  </div>
+</section>
+
+<div class="wrap divider" aria-hidden="true"></div>
+
+<!-- ================= ПРИНАДЛЕЖНОСТИ ================= -->
+<section class="section" id="kit">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Можно не брать с собой</div>
+      <h2>Банные принадлежности</h2>
+      <div class="ornament short" aria-hidden="true"></div>
+    </div>
+    <div class="kit">
+      <article class="plank light kit-item reveal">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="40" width="48" height="14" rx="3"/><rect x="12" y="27" width="40" height="13" rx="3"/><rect x="17" y="15" width="30" height="12" rx="3"/><path d="M14 47h36M18 33h28" stroke-dasharray="3 3"/></svg>
+        <h3>Полотенце</h3>
+        <p>Большое, мягкое, чистое</p>
+        <span class="moss">3 €</span>
+      </article>
+      <article class="plank light kit-item reveal">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M32 8c3 0 4 2 4 4"/><circle cx="32" cy="9" r="3"/><path d="M32 12c-8 0-14 14-17 32-1 5 2 8 6 8h22c4 0 7-3 6-8-3-18-9-32-17-32z"/><path d="M13 46h38"/></svg>
+        <h3>Шапочка</h3>
+        <p>Войлочная, бережёт голову от жара</p>
+        <span class="moss free">бесплатно</span>
+      </article>
+      <article class="plank light kit-item reveal">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M30 34L12 56M34 34L20 56M32 34L16 56"/><path d="M30 34c-6-2-12-8-12-16 4 0 7 2 9 5-1-6 2-12 7-15 2 5 2 10 0 14 3-3 7-4 11-3-1 8-7 13-15 15z"/><path d="M20 46l6 4"/></svg>
+        <h3>Дубовый веник</h3>
+        <p>Свежий, душистый, запаренный</p>
+        <span class="moss">8 €</span>
+      </article>
+      <article class="plank light kit-item reveal">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><path d="M26 8h12l10 6 6 22-7 2-3-12v32H20V26l-3 12-7-2 6-22z"/><path d="M26 8l6 20 6-20M20 34h24"/><path d="M38 40h6v6"/></svg>
+        <h3>Халат</h3>
+        <p>Махровый, тёплый, уютный</p>
+        <span class="moss">5 €</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="wrap divider" aria-hidden="true"></div>
+
+<!-- ================= КАЛЬКУЛЯТОР ================= -->
+<section class="section" id="calc">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="kicker">Рассчитать отдых</div>
+      <h2>Соберите свой пар</h2>
+      <div class="ornament short" aria-hidden="true"></div>
+      <p>Выберите день, число гостей и время — стоимость посчитается сразу. Заявку можно отправить нам в Instagram.</p>
+    </div>
+
+    <div class="calc">
+      <form class="plank calc-form reveal" id="calcForm" onsubmit="return false">
+        <div class="field">
+          <span class="lbl" id="lblDay">День недели</span>
+          <div class="seg" role="group" aria-labelledby="lblDay">
+            <button type="button" class="brus dark" data-day="weekday" aria-pressed="true">Пн — Чт</button>
+            <button type="button" class="brus dark" data-day="weekend" aria-pressed="false">Пт — Вс</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="lbl" id="lblPpl">Сколько гостей</span>
+          <div class="stepper" role="group" aria-labelledby="lblPpl">
+            <button type="button" class="brus dark" data-step="ppl" data-d="-1" aria-label="Меньше гостей">−</button>
+            <output id="pplOut" aria-live="polite">2 чел.</output>
+            <button type="button" class="brus dark" data-step="ppl" data-d="1" aria-label="Больше гостей">+</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="hours">Сколько часов: <span id="hoursOut">3</span></label>
+          <input type="range" id="hours" min="1" max="13" step="1" value="3">
+        </div>
+        <div class="field">
+          <span class="lbl">Дополнительно</span>
+          <div class="checks">
+            <label class="check"><input type="checkbox" id="xJacuzzi"> Джакузи-чан <span class="p" id="pJacuzzi">+20 €</span></label>
+            <label class="check"><input type="checkbox" id="xBbq"> BBQ-зона <span class="p" id="pBbq">+8 €</span></label>
+            <label class="check disabled" id="coalWrap"><input type="checkbox" id="xCoal" disabled> С нашими углями <span class="p">+7 €</span></label>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <span class="lbl">Принадлежности</span>
+          <div class="rent">
+            <div class="rent-row"><div>Полотенце<small>3 €</small></div><div class="mini"><button type="button" data-rent="towel" data-d="-1" aria-label="Убрать полотенце">−</button><output id="r-towel">0</output><button type="button" data-rent="towel" data-d="1" aria-label="Добавить полотенце">+</button></div></div>
+            <div class="rent-row"><div>Халат<small>5 €</small></div><div class="mini"><button type="button" data-rent="robe" data-d="-1" aria-label="Убрать халат">−</button><output id="r-robe">0</output><button type="button" data-rent="robe" data-d="1" aria-label="Добавить халат">+</button></div></div>
+            <div class="rent-row"><div>Дубовый веник<small>8 €</small></div><div class="mini"><button type="button" data-rent="venik" data-d="-1" aria-label="Убрать веник">−</button><output id="r-venik">0</output><button type="button" data-rent="venik" data-d="1" aria-label="Добавить веник">+</button></div></div>
+            <div class="rent-row"><div>Шапочка<small>бесплатно</small></div><div class="mini"><button type="button" data-rent="hat" data-d="-1" aria-label="Убрать шапочку">−</button><output id="r-hat">0</output><button type="button" data-rent="hat" data-d="1" aria-label="Добавить шапочку">+</button></div></div>
+          </div>
+        </div>
+      </form>
+
+      <aside class="plank light receipt reveal" aria-live="polite">
+        <h3>Ваш отдых</h3>
+        <ul id="receiptList"></ul>
+        <div class="total"><span>Итого</span><b id="total">0 €</b></div>
+        <p class="note">Предварительный расчёт. Точную стоимость и свободное время подтвердим в сообщении.</p>
+        <button type="button" class="brus" id="sendBtn">Отправить заявку</button>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================= КОНТАКТЫ ================= -->
+<section class="section" id="contact" style="padding-top:0">
+  <div class="wrap">
+    <div class="plank contact reveal">
+      <div class="kicker">Запись и вопросы</div>
+      <h2>Ждём вас в гости</h2>
+      <div class="ornament short" aria-hidden="true"></div>
+      <p>Напишите нам в Instagram — подберём удобное время, натопим баню и запарим веники к вашему приезду.</p>
+      <div class="actions">
+        <a class="brus ig" href="https://ig.me/m/banya.ivan" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>Написать
+        </a>
+        <a class="brus dark ig" href="https://instagram.com/banya.ivan" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>@banya.ivan
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="ornament" aria-hidden="true"></div>
+    <a class="logo" href="#hero">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#2e1c10" stroke="#e0ac67" stroke-width="1.5"/><use href="#leaf" x="8" y="7" width="32" height="32" style="color:#e0ac67"/></svg>
+      <span>Баня Иван</span>
+    </a>
+    <div>Ежедневно 10:00 — 23:00 · <a href="https://instagram.com/banya.ivan" target="_blank" rel="noopener">@banya.ivan</a></div>
+    <div style="margin-top:6px;opacity:.7">С лёгким паром!</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  /* шапка */
+  const bar = document.querySelector('.topbar');
+  const onScroll = () => bar.classList.toggle('scrolled', scrollY > 40);
+  addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  /* видео */
+  const v = document.getElementById('heroVideo'), vt = document.getElementById('videoToggle');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const setIcon = paused => {
+    vt.innerHTML = paused
+      ? '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z" fill="currentColor"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/></svg>';
+    vt.setAttribute('aria-label', paused ? 'Включить видео' : 'Поставить видео на паузу');
+  };
+  const saveData = navigator.connection && navigator.connection.saveData;
+  if (reduce || saveData) { v.removeAttribute('autoplay'); v.preload = 'none'; v.pause(); setIcon(true); }
+  vt.addEventListener('click', () => { if (v.paused) { v.play(); setIcon(false); } else { v.pause(); setIcon(true); } });
+
+  /* появление */
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach((el, i) => { el.style.transitionDelay = (i % 3) * 90 + 'ms'; io.observe(el); });
+
+  /* калькулятор */
+  const RATES = { weekday:[30,35,45], weekend:[40,45,55] };
+  const RENT = { towel:{name:'Полотенце',p:3}, robe:{name:'Халат',p:5}, venik:{name:'Дубовый веник',p:8}, hat:{name:'Шапочка',p:0} };
+  const st = { day:'weekday', ppl:2, hours:3, rent:{towel:0,robe:0,venik:0,hat:0} };
+  const $ = id => document.getElementById(id);
+  const tier = n => n <= 2 ? 0 : n <= 6 ? 1 : 2;
+  const plural = (n, a, b, c) => { const m10 = n % 10, m100 = n % 100; return m10 === 1 && m100 !== 11 ? a : (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) ? b : c; };
+
+  document.querySelectorAll('[data-day]').forEach(b => b.addEventListener('click', () => {
+    st.day = b.dataset.day;
+    document.querySelectorAll('[data-day]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    render();
+  }));
+  document.querySelectorAll('[data-step="ppl"]').forEach(b => b.addEventListener('click', () => {
+    st.ppl = Math.min(10, Math.max(1, st.ppl + +b.dataset.d)); render();
+  }));
+  $('hours').addEventListener('input', e => { st.hours = +e.target.value; render(); });
+  ['xJacuzzi','xBbq','xCoal'].forEach(id => $(id).addEventListener('change', render));
+  document.querySelectorAll('[data-rent]').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.rent; st.rent[k] = Math.min(10, Math.max(0, st.rent[k] + +b.dataset.d)); render();
+  }));
+
+  let lastText = '';
+  function render(){
+    const rate = RATES[st.day][tier(st.ppl)];
+    const gift = st.hours >= 5;
+    const bbq = $('xBbq').checked, jac = $('xJacuzzi').checked;
+    $('xCoal').disabled = !bbq; $('coalWrap').classList.toggle('disabled', !bbq);
+    if (!bbq) $('xCoal').checked = false;
+    const coal = $('xCoal').checked;
+
+    $('pplOut').textContent = st.ppl + ' чел.';
+    $('hoursOut').textContent = st.hours + ' ' + plural(st.hours,'час','часа','часов');
+    $('pJacuzzi').textContent = gift ? 'в подарок' : '+20 €';
+    $('pBbq').textContent = gift ? 'в подарок' : '+8 €';
+    Object.keys(st.rent).forEach(k => $('r-' + k).textContent = st.rent[k]);
+
+    const lines = [];
+    const dayName = st.day === 'weekday' ? 'Пн–Чт' : 'Пт–Вс';
+    lines.push([`Баня, ${dayName}, ${st.ppl} чел. · ${st.hours} ч × ${rate} €`, rate * st.hours]);
+    if (jac) lines.push(['Джакузи-чан', gift ? 'gift' : 20]);
+    if (bbq) lines.push(['BBQ-зона', gift ? 'gift' : 8]);
+    if (coal) lines.push(['Наши угли', 7]);
+    for (const [k, r] of Object.entries(RENT)) if (st.rent[k]) lines.push([`${r.name} × ${st.rent[k]}`, r.p ? r.p * st.rent[k] : 'free']);
+
+    const total = lines.reduce((s, [, p]) => s + (typeof p === 'number' ? p : 0), 0);
+    $('receiptList').innerHTML = lines.map(([n, p]) => {
+      const cls = (p === 'gift' || p === 'free') ? ' class="gift"' : '';
+      const val = p === 'gift' ? 'в подарок' : p === 'free' ? 'бесплатно' : p + ' €';
+      return `<li${cls}><span>${n}</span><span>${val}</span></li>`;
+    }).join('') + (gift && !jac && !bbq ? '<li class="gift"><span>От 5 часов джакузи и BBQ — бесплатно</span><span>✦</span></li>' : '');
+    $('total').textContent = total + ' €';
+
+    lastText = 'Здравствуйте! Хочу забронировать баню.\n' +
+      lines.map(([n, p]) => '• ' + n + (p === 'gift' ? ' — в подарок' : p === 'free' ? ' — бесплатно' : '')).join('\n') +
+      `\nПредварительно: ${total} €\nДата и время: `;
+  }
+  render();
+
+  const toast = $('toast'); let tt;
+  const showToast = msg => { toast.textContent = msg; toast.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('show'), 3800); };
+  $('sendBtn').addEventListener('click', async () => {
+    let copied = false;
+    try { await navigator.clipboard.writeText(lastText); copied = true; } catch (e) {}
+    showToast(copied ? 'Заявка скопирована — вставьте её в сообщение в Instagram' : 'Откроем Instagram — опишите дату, время и число гостей');
+    setTimeout(() => window.open('https://ig.me/m/banya.ivan', '_blank', 'noopener'), 700);
+  });
+})();
+</script>
+</body>
+</html>
